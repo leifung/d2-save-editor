@@ -2,7 +2,7 @@
  * d2s_engine.js — Diablo II 1.13c (.d2s) parse / in-place edit engine
  *
  * Faithful JS port of dschu012/d2s read logic (verified bit-exact against the
- * real save leiya.d2s: parses to exact EOF, checksum matches).
+ * real 1.13c saves: parses to exact EOF, checksum matches).
  *
  * Design: parse() records a bit-level ANCHOR for every editable numeric field.
  * applyEdits() rewrites ONLY those bit ranges in a copy of the original bytes,
@@ -96,7 +96,9 @@
     passive_critical_strike: '致命攻击(被动)', passive_pierce: '穿透(被动)',
     item_mindamage_percent: '增强最小伤害 %', item_maxdamage_percent: '增强最大伤害 %'
   };
-  function propCN(name) { return PROP_CN[name] || null; }
+  function propCN(name, data) {
+    return PROP_CN[name] || (data && data.add && data.add.prop_cn && data.add.prop_cn[name]) || null;
+  }
 
   function makeEngine(DATA) {
     var MP = DATA.mp;
@@ -182,17 +184,22 @@
     }
 
     // ---------------- magic properties ----------------
-    function readMagicProps(r, out, group) {
+    // `segments` records the bit layout of each property list so that new
+    // stats can be inserted later without re-encoding any existing stat.
+    function readMagicProps(r, out, group, segments) {
+      var seg = { group: group, startBit: r.off, props: [], endFlagBit: 0, endBit: 0 };
+      if (segments) segments.push(seg);
       var pid = r.rb(9);
       while (pid !== 0x1ff) {
         if (pid >= MP.length || !MP[pid]) throw new Error('无效属性 ID ' + pid + ' @bit ' + (r.off - 9));
+        var propStartBit = r.off - 9;
         var np = MP[pid].np || 1;
         for (var j = 0; j < np; j++) {
           var idx = pid + j, prop = MP[idx];
           if (!prop) throw new Error('找不到属性定义 ' + idx + ' @bit ' + r.off);
           if (!prop.sB) throw new Error('属性 ' + idx + ':' + prop.s + ' 缺少 Save Bits @bit ' + r.off);
           var p = {
-            id: idx, name: prop.s, cn: propCN(prop.s), group: group,
+            id: idx, name: prop.s, cn: propCN(prop.s, DATA), group: group,
             dF: prop.dF || 0, e: prop.e || 0, sB: prop.sB, sA: prop.sA || 0, sP: prop.sP || 0,
             params: [], values: []
           };
@@ -207,8 +214,11 @@
           p.values.push(vf);
           out.push(p);
         }
+        seg.props.push({ id: pid, startBit: propStartBit, endBit: r.off });
         pid = r.rb(9);
       }
+      seg.endFlagBit = r.off - 9;   // start of the 0x1FF terminator
+      seg.endBit = r.off;           // first bit after the terminator
     }
 
     // ---------------- simple bits ----------------
@@ -270,7 +280,8 @@
         if (r.rstr(2) !== 'JM') throw new Error("物品头 'JM' 未找到 @bit " + (r.off - 16));
       }
       var item = {
-        props: [], socketed_items: [], source: source || 'char', depth: depth || 0,
+        props: [], socketed_items: [], prop_segments: [],
+        source: source || 'char', depth: depth || 0,
         start_byte: (r.off - 16) / 8
       };
       readSimpleBits(r, version, item);
@@ -324,21 +335,25 @@
         }
         var plist = 0;
         if (q === QUALITY.Set) plist = r.rb(5);
-        readMagicProps(r, item.props, 'magic');
+        readMagicProps(r, item.props, 'magic', item.prop_segments);
         while (plist > 0) {
-          if (plist & 1) readMagicProps(r, item.props, 'set');
+          if (plist & 1) readMagicProps(r, item.props, 'set', item.prop_segments);
           plist >>= 1;
         }
-        if (item.given_runeword === 1) readMagicProps(r, item.props, 'runeword');
+        if (item.given_runeword === 1) readMagicProps(r, item.props, 'runeword', item.prop_segments);
       }
       item.location_text = locationText(item);
       item.display_name = buildDisplayName(item, DATA);
       r.align();
+      item.align_bit = r.off;   // byte-aligned: end of the variable-length bit stream
       if (item.nr_of_items_in_sockets > 0 && item.simple_item === 0) {
         for (var s = 0; s < item.nr_of_items_in_sockets; s++) {
           item.socketed_items.push(readItem(r, version, source, (depth || 0) + 1));
         }
       }
+      item.end_byte = r.off / 8;
+      item.can_add_props = !item.simple_item && !item.is_ear &&
+        item.prop_segments.some(function (g) { return g.group === 'magic'; });
       return item;
     }
 
@@ -451,6 +466,14 @@
       r.align();
       res.end_byte = r.off / 8;
       res.fields = r.fields;
+      // Top-level items of every section, in file order. The gaps between them
+      // are section markers / counts / 12-byte corpse headers and are copied
+      // verbatim by rebuildAll().
+      res.toplevel = [].concat(res.items);
+      for (var ti = 0; ti < res.corpses.length; ti++) res.toplevel = res.toplevel.concat(res.corpses[ti]);
+      res.toplevel = res.toplevel.concat(res.merc_items);
+      if (res.golem_item) res.toplevel.push(res.golem_item);
+      res.toplevel.sort(function (a, b) { return a.start_byte - b.start_byte; });
       res.ok = res.end_byte === buf.length;
       return res;
     }
@@ -510,6 +533,250 @@
       return buf;
     }
 
+    // =====================================================================
+    // ADD PROPERTY / ADD SKILL  --  structural rewrite
+    //
+    // An item is a byte-aligned block: a variable-length bit stream (header +
+    // property lists + 0x1FF terminators) followed by zero or more byte-aligned
+    // socketed items. To append a stat we splice its bits into the *magic*
+    // property list (in ascending stat-id order, just like the game writes),
+    // re-pad the bit stream to a byte boundary, then re-attach the socketed
+    // items verbatim. Every non-target byte of the save is copied unchanged.
+    // =====================================================================
+
+    var ADDMAP = {};
+    (DATA.add ? DATA.add.addable : []).forEach(function (a) { ADDMAP[a.id] = a; });
+
+    function addableProps() { return DATA.add ? DATA.add.addable : []; }
+
+    function pushBits(arr, value, n) {
+      var v = unsigned(value, n);
+      for (var i = 0; i < n; i++) { arr.push(v % 2); v = Math.floor(v / 2); }
+    }
+    function readBits(buf, bitOff, count) {
+      var a = new Array(count);
+      for (var i = 0; i < count; i++) {
+        var k = bitOff + i;
+        a[i] = (buf[k >> 3] >> (k & 7)) & 1;
+      }
+      return a;
+    }
+    function bitsToBytes(bits) {
+      var out = new Uint8Array(bits.length / 8);
+      for (var i = 0; i < bits.length; i++) if (bits[i]) out[i >> 3] |= (1 << (i & 7));
+      return out;
+    }
+    function concatBytes(parts) {
+      var n = 0, i;
+      for (i = 0; i < parts.length; i++) n += parts[i].length;
+      var out = new Uint8Array(n), p = 0;
+      for (i = 0; i < parts.length; i++) { out.set(parts[i], p); p += parts[i].length; }
+      return out;
+    }
+
+    // Parameter widgets that are more useful than a raw number.
+    var PARAM_KIND = {
+      83: 'class',    // +N to <class> Skill Levels   (sP=3)
+      126: 'raw',     // +N to elemental skills       (sP=3, 0..7)
+      151: 'skill',   // aura                        (sP=9, skill id)
+      98: 'raw', 155: 'raw', 179: 'raw', 180: 'raw'
+    };
+
+    /**
+     * Describe the input fields needed to encode a new stat. The field order
+     * matches dschu012's magic-property "values" array exactly:
+     *   sP param (+ optional tab/class or level/skill sub-fields), then value
+     *   (+ optional current/max charges for e=3).
+     */
+    function describeAddProp(id) {
+      var m = ADDMAP[id];
+      if (!m) return null;
+      var fields = [];
+      for (var j = 0; j < m.np; j++) {
+        var q = m.members[j];
+        var pfx = m.np > 1 ? ('#' + (j + 1) + ' ') : '';
+        if (q.sP) {
+          var kind = PARAM_KIND[id] || 'raw';
+          if (q.e === 2 || q.e === 3) {
+            fields.push({ label: pfx + '技能等级', kind: 'num', min: 0, max: 63, def: 1, key: 'sklvl' });
+            fields.push({ label: pfx + '技能', kind: 'skill', min: 0, max: 1023, def: 54, key: 'skill' });
+          } else if (q.dF === 14) {
+            fields.push({ label: pfx + '技能系', kind: 'tab', min: 0, max: 7, def: 0, key: 'tab' });
+            fields.push({ label: pfx + '职业', kind: 'class', min: 0, max: 6, def: 0, key: 'class' });
+          } else if (q.e === 1) {
+            fields.push({ label: pfx + '技能', kind: 'skill', min: 0, max: Math.pow(2, q.sP) - 1, def: 54, key: 'skill' });
+          } else if (kind === 'class') {
+            fields.push({ label: pfx + '职业', kind: 'class', min: 0, max: Math.pow(2, q.sP) - 1, def: 0, key: 'class' });
+          } else if (kind === 'skill') {
+            fields.push({ label: pfx + '技能', kind: 'skill', min: 0, max: Math.pow(2, q.sP) - 1, def: 0, key: 'skill' });
+          } else {
+            fields.push({ label: pfx + '参数（原始值）', kind: 'num', min: 0, max: Math.pow(2, q.sP) - 1, def: 0, key: 'raw' });
+          }
+        }
+        if (q.e === 3) {
+          fields.push({ label: pfx + '当前充能', kind: 'num', min: 0, max: 255, def: 5, key: 'cur' });
+          fields.push({ label: pfx + '最大充能', kind: 'num', min: 0, max: 255, def: 5, key: 'max' });
+        } else {
+          fields.push({
+            label: pfx + '数值', kind: 'num', min: -(q.sA || 0),
+            max: Math.pow(2, q.sB) - 1 - (q.sA || 0), def: 1, key: 'val'
+          });
+        }
+      }
+      return {
+        id: id, cn: m.cn, en: m.s, np: m.np, cat: m.cat, fields: fields,
+        defaults: fields.map(function (f) { return f.def; }),
+        bits: fields.length
+      };
+    }
+
+    /** Encode one new property into a bit array (LSB-first, 9-bit stat id first). */
+    function buildPropBits(id, values) {
+      var m = ADDMAP[id];
+      if (!m) throw new Error('属性 ' + id + ' 不可添加');
+      var bits = [], vi = 0;
+      pushBits(bits, id, 9);
+      for (var j = 0; j < m.np; j++) {
+        var q = m.members[j];
+        if (q.sP) {
+          var param = Number(values[vi++]);
+          if (q.dF === 14) {
+            param = (param & 0x7) | ((Number(values[vi++]) & 0x1fff) * 8);
+          } else if (q.e === 2 || q.e === 3) {
+            param = (param & 0x3f) | ((Number(values[vi++]) & 0x3ff) * 64);
+          }
+          pushBits(bits, param, q.sP);
+        }
+        var v = Number(values[vi++]) + (q.sA || 0);
+        if (q.e === 3) v = (v & 0xff) | ((Number(values[vi++]) & 0xff) * 256);
+        pushBits(bits, v, q.sB);
+      }
+      return bits;
+    }
+
+    /** Clamp / validate the UI values for a new property. */
+    function normalizeAddValues(id, values) {
+      var d = describeAddProp(id);
+      if (!d) throw new Error('属性 ' + id + ' 不可添加');
+      var out = [];
+      for (var i = 0; i < d.fields.length; i++) {
+        var f = d.fields[i], v = Number(values && values[i]);
+        if (!isFinite(v)) v = f.def;
+        v = Math.round(v);
+        if (v < f.min) v = f.min;
+        if (v > f.max) v = f.max;
+        out.push(v);
+      }
+      return out;
+    }
+
+    function magicSegment(item) {
+      for (var i = 0; i < item.prop_segments.length; i++) {
+        if (item.prop_segments[i].group === 'magic') return item.prop_segments[i];
+      }
+      return null;
+    }
+
+    function insertBitFor(seg, newId) {
+      for (var i = 0; i < seg.props.length; i++) {
+        if (seg.props[i].id > newId) return seg.props[i].startBit;
+      }
+      return seg.endFlagBit;
+    }
+
+    function insertionsFor(item, adds, buf) {
+      if (!adds || !adds.length) return [];
+      var seg = magicSegment(item);
+      if (!seg) throw new Error('该物品没有可编辑的属性列表（简易物品/金币/耳朵）');
+      var list = [];
+      for (var i = 0; i < adds.length; i++) {
+        list.push({
+          bit: insertBitFor(seg, adds[i].id),
+          id: adds[i].id, seq: i,
+          bits: buildPropBits(adds[i].id, adds[i].values)
+        });
+      }
+      // splice from the back so earlier bit offsets stay valid. Equal offsets
+      // are processed high-id / high-seq first so the final list is ascending.
+      list.sort(function (a, b) { return (b.bit - a.bit) || (b.id - a.id) || (b.seq - a.seq); });
+      return list;
+    }
+
+    function rebuildItem(buf, item, addMap) {
+      var a0 = item.start_byte * 8, a1 = item.align_bit;
+      var bits = readBits(buf, a0, a1 - a0);
+      // Everything after the LAST 0x1FF terminator is byte-alignment padding.
+      // It must be discarded and recomputed: keeping the old padding AND adding
+      // new padding would shift the following item by a whole byte.
+      var effective = 0;
+      for (var s = 0; s < item.prop_segments.length; s++) {
+        effective = Math.max(effective, item.prop_segments[s].endBit - a0);
+      }
+      if (!effective) effective = bits.length;
+      if (effective > bits.length) effective = bits.length;
+      var ins = insertionsFor(item, addMap[item.start_byte], buf);
+      var inserted = 0;
+      for (var i = 0; i < ins.length; i++) {
+        var rel = ins[i].bit - a0;
+        if (rel < 0 || rel > effective) throw new Error('属性插入位置越界');
+        bits = bits.slice(0, rel).concat(ins[i].bits, bits.slice(rel));
+        inserted += ins[i].bits.length;
+      }
+      bits.length = effective + inserted;   // drop old padding
+      while (bits.length % 8) bits.push(0); // recompute byte alignment
+      var parts = [bitsToBytes(bits)];
+      for (var c = 0; c < item.socketed_items.length; c++) {
+        parts.push(rebuildItem(buf, item.socketed_items[c], addMap));
+      }
+      return concatBytes(parts);
+    }
+
+    function allItemKeys(items, set) {
+      for (var i = 0; i < items.length; i++) {
+        set[items[i].start_byte] = 1;
+        allItemKeys(items[i].socketed_items, set);
+      }
+      return set;
+    }
+
+    function rebuildAll(buf, res, additions) {
+      var map = {}, known = {};
+      allItemKeys(res.toplevel, known);
+      for (var i = 0; i < additions.length; i++) {
+        var a = additions[i];
+        if (!known[a.item]) throw new Error('找不到目标物品（字节位置 ' + a.item + '）');
+        (map[a.item] = map[a.item] || []).push({
+          id: a.id, values: normalizeAddValues(a.id, a.values)
+        });
+      }
+      var parts = [], cur = 0;
+      for (var t = 0; t < res.toplevel.length; t++) {
+        var top = res.toplevel[t];
+        if (top.start_byte < cur) throw new Error('物品字节范围重叠，无法安全重建');
+        parts.push(buf.slice(cur, top.start_byte));
+        parts.push(rebuildItem(buf, top, map));
+        cur = top.end_byte;
+      }
+      parts.push(buf.slice(cur));
+      return concatBytes(parts);
+    }
+
+    /**
+     * Unified save: ordinary in-place edits first, then structural additions.
+     * opts = { edits:[{anchor,value}], additions:[{item,id,values}], levelSync }
+     */
+    function save(original, opts) {
+      opts = opts || {};
+      var buf = applyEdits(original, opts.edits || [], opts.levelSync);
+      var adds = opts.additions || [];
+      if (!adds.length) return buf;
+      var res = parse(buf);
+      if (!res.ok) throw new Error('存档未能精确对齐 EOF，为安全起见拒绝添加属性');
+      var out = rebuildAll(buf, res, adds);
+      fixHeader(out);
+      return out;
+    }
+
     function fieldRange(anchor) {
       var max = Math.pow(2, anchor.bits) - 1;
       if (anchor.kind === 'attr') {
@@ -535,9 +802,11 @@
     }
 
     return {
-      parse: parse, applyEdits: applyEdits, fixHeader: fixHeader, checksum: checksum,
+      parse: parse, applyEdits: applyEdits, save: save, fixHeader: fixHeader, checksum: checksum,
       setBits: setBits, encodeField: encodeField, fieldRange: fieldRange,
       decodeVal: decodeVal, flatten: flatten, propCN: propCN,
+      addableProps: addableProps, describeAddProp: describeAddProp,
+      normalizeAddValues: normalizeAddValues, buildPropBits: buildPropBits,
       ITEM_TYPE: ITEM_TYPE, QUALITY: QUALITY, QUALITY_CN: QUALITY_CN, ATTR_LABEL: ATTR_LABEL
     };
   }

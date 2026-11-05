@@ -44,7 +44,8 @@ data = {
     'other': slim_items(C['other_items']),
     'stackables': list(C['stackables'].keys()),
     'classes': [d.get('n') if d else None for d in C['classes']],
-    'skills': slim_names(C['skills']),
+    # skills.txt uses "s" (not "n") for the skill name
+    'skills': [d.get('s') if d else None for d in C['skills']],
     'magic_prefixes': slim_names(C['magic_prefixes']),
     'magic_suffixes': slim_names(C['magic_suffixes']),
     'set_items': slim_names(C['set_items']),
@@ -58,6 +59,13 @@ _cn_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'item_cn.jso
 if os.path.exists(_cn_path):
     with open(_cn_path, encoding='utf-8') as f:
         data['cn'] = json.load(f)
+
+# Metadata for the "add property / add skill" feature (Chinese stat names,
+# writable stat descriptors, Chinese skill names, classes and skill tabs).
+_add_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'add_meta.json')
+if os.path.exists(_add_path):
+    with open(_add_path, encoding='utf-8') as f:
+        data['add'] = json.load(f)
 
 out = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'd2s_data.json')

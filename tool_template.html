@@ -146,6 +146,39 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
 .param{font-size:10.5px;color:var(--tx3);font-family:var(--mono)}
 .noprops{color:var(--tx3);font-size:12.5px;padding:14px 0;text-align:center}
 
+/* ---------- add property / add skill ---------- */
+.addbox{margin-top:20px;border:1px solid #cadee7;border-radius:9px;overflow:hidden;background:#fff}
+.addbox-h{padding:9px 13px;background:var(--blue-l);border-bottom:1px solid #cadee7;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.addbox-h b{font-size:12.5px;color:var(--blue);font-weight:650}
+.addbox-h .tip{font-size:11px;color:#4a6688}
+.addbox-h .cnt{margin-left:auto;font-size:11px;font-family:var(--mono);color:var(--blue)}
+.addbox-b{padding:11px 13px 13px}
+.addcats{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}
+.addcat{font-size:11.5px;padding:4px 10px;border:1px solid var(--line2);background:#fff;border-radius:14px;cursor:pointer;color:var(--tx2);font-family:inherit}
+.addcat:hover{border-color:var(--blue)}
+.addcat.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.addrow{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.addrow>span{font-size:11.5px;color:var(--tx2);white-space:nowrap}
+.addrow input,.addrow select,.addf input,.addf select{border:1px solid var(--line2);border-radius:6px;padding:6px 8px;font:12.5px inherit;font-family:inherit;background:#fff;color:var(--tx);outline:none;min-width:0}
+.addrow input:focus,.addrow select:focus,.addf input:focus,.addf select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,95,158,.08)}
+.addrow #add-q{flex:0 1 190px}
+.addrow #add-prop{flex:1 1 230px}
+.addfields{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:8px;margin:10px 0 9px}
+.addf{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:7px 9px}
+.addf label{display:block;font-size:11px;color:var(--tx2);margin-bottom:4px;font-weight:550}
+.addf input,.addf select{width:100%;font-family:var(--mono);font-size:12px}
+.addf select{font-family:inherit}
+.addf .rg{font-size:10px;color:var(--tx3);font-family:var(--mono);margin-top:3px}
+.addnote{font-size:11px;color:var(--tx3);line-height:1.6;margin-bottom:9px}
+.addlist{margin-top:10px;border-top:1px dashed var(--line2);padding-top:9px}
+.addlist h4{margin:0 0 7px;font-size:11.5px;font-weight:650;color:var(--tx2)}
+.additem{display:flex;align-items:center;gap:8px;background:var(--blue-l);border:1px solid #d5e3f3;border-radius:6px;padding:6px 9px;margin-bottom:5px;font-size:11.5px}
+.additem .nm{font-weight:600;color:#2b507f}
+.additem .vv{font-family:var(--mono);color:var(--tx2);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.additem .x{margin-left:auto;border:0;background:transparent;color:var(--red);cursor:pointer;font-size:15px;line-height:1;padding:0 3px}
+.additem .x:hover{color:#5c1616}
+.add-disabled{padding:12px 13px;font-size:12px;color:var(--tx3)}
+
 /* ---------- bottom bar ---------- */
 .bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line2);z-index:20;box-shadow:0 -3px 14px rgba(40,35,25,.05)}
 .bar-in{max-width:1240px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -175,7 +208,7 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
     <div class="logo">D2</div>
     <div class="htx">
       <h1>暗黑破坏神 II 存档修改器</h1>
-      <p>直接修改人物属性与装备属性 · 原位位改写 · 自动重算校验和</p>
+      <p>修改人物属性与装备属性 · 新增技能与词条 · 原位位改写 · 自动重算校验和</p>
     </div>
     <span class="badge-ver">仅支持 1.13c · .d2s</span>
   </div>
@@ -219,7 +252,8 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
   <!-- 装备属性 -->
   <div class="page" id="page-equip">
     <div class="warnbox">
-      装备数值修改采用<b>原位位改写</b>：只覆写数值所在的位，不改变属性条数或装备结构，因此文件大小不变、其余字节完全保留。
+      <b>修改已有数值</b>采用原位位改写（文件大小不变）；<b>添加技能 / 词条</b>会在该装备的魔法属性列表中插入新属性（按属性 ID 升序），只重建目标装备的位流，
+      后续字节整体后移，因此<b>文件会相应变长</b>，并自动重算文件长度与校验和。其余装备与人物数据保持原样。
       数值请勿超过字段上限（界面已自动限制）；过大的数值在游戏内可能显示异常。
     </div>
     <div class="eq">
@@ -243,15 +277,24 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
       <h3>工作原理</h3>
       <ul>
         <li>本工具按 <b>Diablo II 1.13c 存档格式</b>逐位解析文件：固定 765 字节头部 → <code>gf</code> 人物属性段 → <code>if</code> 技能段 → <code>JM</code> 物品列表 → 尸体 → <code>jf</code> 雇佣兵 → <code>kf</code> 石魔。</li>
-        <li>解析时为每个可编辑数值记录<b>位偏移量与位宽</b>；保存时只把这些位写回文件副本，随后重算<b>文件长度</b>与<b>校验和</b>（D2S 标准累加算法）。因此<b>不改变装备结构、不增删属性、文件大小恒定</b>，未知字节原样保留。</li>
-        <li>魔法属性按 1.13c 的 <code>ItemStatCost</code> 位宽（Save Bits / Save Add / Save Param Bits / Encode）解码，已处理充能技能、技能参数、8.8 定点生命等特殊情况。</li>
-        <li>物品、魔法词缀、暗金与套装名称取自游戏中文版字符串表（<code>string.tbl</code> / <code>expansionstring.tbl</code> / <code>patchstring.tbl</code>），已由繁体转为简体。列表与详情同时保留英文原名，<b>搜索框支持中英文混搜</b>；个别未被汉化的条目自动回退英文。</li>
+        <li>解析时为每个可编辑数值记录<b>位偏移量与位宽</b>。修改已有数值时只把这些位写回文件副本（原位位改写，文件大小不变）；随后重算<b>文件长度</b>与<b>校验和</b>（D2S 标准累加算法），未知字节原样保留。</li>
+        <li>魔法属性按 1.13c 的 <code>ItemStatCost</code> 位宽（Save Bits / Save Add / Save Param Bits / Encode）解码与编码，已处理充能技能、技能参数、技能系、多属性组、8.8 定点生命等特殊情况。</li>
+        <li><b>添加技能 / 词条</b>时，按 9 位属性 ID + 参数位 + 数值位生成新的属性位段，插入到目标装备魔法属性列表的正确位置（保持属性 ID 升序），丢弃旧的对齐填充并重新按字节对齐，再把镶嵌物等后续字节原样接回；各物品段、尸体、雇佣兵、石魔段按字节重新拼接。因此文件会变长，但其它数据一位不动。</li>
+        <li>物品、魔法词缀、暗金与套装名称取自游戏中文版字符串表（<code>string.tbl</code> / <code>expansionstring.tbl</code> / <code>patchstring.tbl</code>），已由繁体转为简体。技能名同样来自官方字符串表并按英文名对齐技能 ID。列表与详情同时保留英文原名，<b>搜索框支持中英文混搜</b>；个别未被汉化的条目自动回退英文。</li>
+      </ul>
+      <h3 style="margin-top:18px">添加技能 / 词条属性</h3>
+      <ul>
+        <li>在「装备属性」页选中一件装备，详情页底部有<b>「＋ 添加技能 / 词条属性」</b>面板。可选 <b>239 种</b>可写属性，按「技能 / 常用词条 / 其它 / 高级 / 全部」分类，支持中文名、英文名或 ID 搜索。</li>
+        <li>技能类包含：<code>+所有技能等级</code>、<code>+单项技能等级</code>、<code>+职业技能等级</code>、<code>+技能系等级</code>、<code>攻击/命中/击杀/受击/升级时施放技能</code>、<code>充能技能</code>等。选择技能时下拉框为<b>官方中文技能名</b>，充能技能可分别设置当前/最大充能次数。</li>
+        <li>点「加入待添加列表」后可继续选其它属性或切换到别的装备，<b>所有待添加项一次性写入</b>；保存前可逐条移除或清空。底部状态栏显示待添加条数。</li>
+        <li>新增属性只对所选装备生效。<b>简易物品</b>（金币、药水、耳朵等）没有属性列表，界面会禁用添加。保存后<b>重新载入新文件</b>即可像普通属性一样继续编辑新增的数值。</li>
+        <li>部分属性有游戏侧限制（例如只对特定物品类型生效、需要对应技能或职业），写入合法但游戏内可能不显示；「高级」分类里的 by-time、灵气、怪物类型等属性使用原始编码，请谨慎使用。</li>
       </ul>
       <h3 style="margin-top:18px">使用步骤</h3>
       <ul>
-        <li><b>先备份</b>原存档（例如复制一份 <code>leiya.d2s.bak</code>），再修改。</li>
-        <li>分别在「人物属性」「装备属性」页修改数值，底部会显示改动项数。</li>
-        <li>点「保存并下载」，得到 <code>原文件名_mod.d2s</code>，<b>改名回原文件名</b>后覆盖游戏 <code>Save</code> 目录中的原档即可。</li>
+        <li><b>先备份</b>原存档（例如复制一份 <code>你的角色.d2s.bak</code>），再修改。</li>
+        <li>在「人物属性」页改人物数值；在「装备属性」页改现有数值，并用详情页底部的面板<b>添加技能 / 词条</b>。底部状态栏会同时显示改动项数与待添加条数。</li>
+        <li>点「保存并下载」，得到 <code>原文件名_mod.d2s</code>（若新增了属性，文件会比原来大一些），<b>改名回原文件名</b>后覆盖游戏 <code>Save</code> 目录中的原档即可。</li>
         <li>建议<b>退出游戏后</b>再替换文件，避免游戏退出时回写覆盖修改结果。</li>
       </ul>
       <h3 style="margin-top:18px">适用范围与注意</h3>
@@ -270,7 +313,7 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
 
 <div class="bar" id="bar" style="display:none">
   <div class="bar-in">
-    <div class="st">已修改 <b id="edit-count">0</b> 项</div>
+    <div class="st">已修改 <b id="edit-count">0</b> 项 · 待添加 <b id="add-count">0</b> 条属性</div>
     <div class="sp"></div>
     <button class="btn" id="reset-all">还原全部</button>
     <button class="btn" id="reload">选择其他文件</button>
@@ -286,7 +329,12 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
 'use strict';
 var DATA = JSON.parse(document.getElementById('d2s-data').textContent);
 var E = D2SEngine.makeEngine(DATA);
-var S = { bytes:null, res:null, name:'', edits:{}, tab:'attrs', sel:-1, items:[] };
+var S = {
+  bytes:null, res:null, name:'', edits:{}, tab:'attrs', sel:-1, items:[],
+  adds:[], addCat:'skill', addQ:'', addId:127, addVals:[]
+};
+var ADD = DATA.add || { addable:[], skills_en:[], skills_cn:[], classes_cn:[], tabs_cn:[] };
+var CATS = [['skill','技能'],['common','常用词条'],['other','其它词条'],['advanced','高级'],['all','全部']];
 
 function $(s){return document.querySelector(s)}
 function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
@@ -395,6 +443,119 @@ function renderList(){
   $('#cnt-item').textContent=S.items.length;
 }
 
+/* ---- add property / add skill: reusable option lists ---- */
+var SKILL_OPTS='';
+(function(){
+  for(var i=0;i<(ADD.skills_en||[]).length;i++){
+    if(!ADD.skills_en[i]) continue;
+    var cn=ADD.skills_cn[i]||ADD.skills_en[i];
+    SKILL_OPTS+='<option value="'+i+'">'+esc(cn+' · #'+i)+'</option>';
+  }
+})();
+function classOptions(max){
+  var h='', n=Math.min(max,(ADD.classes_cn||[]).length-1);
+  for(var c=0;c<=n;c++) h+='<option value="'+c+'">'+esc(ADD.classes_cn[c])+'</option>';
+  for(var x=n+1;x<=max;x++) h+='<option value="'+x+'">（保留值 '+x+'）</option>';
+  return h;
+}
+function tabOptions(cls,max){
+  var h='', tabs=(ADD.tabs_cn||[])[cls]||null;
+  for(var t=0;t<=max;t++)
+    h+='<option value="'+t+'">'+esc(tabs&&tabs[t]?tabs[t]:('技能系 '+t))+'</option>';
+  return h;
+}
+function addOptions(){
+  var q=S.addQ.trim().toLowerCase();
+  return E.addableProps().filter(function(p){
+    if(S.addCat!=='all' && p.cat!==S.addCat) return false;
+    if(!q) return true;
+    return (p.cn+' '+p.s+' '+p.id).toLowerCase().indexOf(q)>=0;
+  });
+}
+function ensureAddId(){
+  var opts=addOptions();
+  if(!opts.length){S.addId=0;S.addVals=[];return null}
+  if(!opts.some(function(p){return p.id===S.addId})) S.addId=opts[0].id;
+  var d=E.describeAddProp(S.addId);
+  if(!d){S.addVals=[];return null}
+  if(S.addVals.length!==d.fields.length) S.addVals=d.defaults.slice();
+  return d;
+}
+function addFieldHtml(f,i,d){
+  var h='<div class="addf"><label>'+esc(f.label)+'</label>';
+  if(f.kind==='skill') h+='<select class="addv" data-k="'+i+'">'+SKILL_OPTS+'</select>';
+  else if(f.kind==='class') h+='<select class="addv" data-k="'+i+'" data-kind="class">'+classOptions(f.max)+'</select>';
+  else if(f.kind==='tab'){
+    var ci=-1;
+    for(var k=0;k<d.fields.length;k++) if(d.fields[k].kind==='class') ci=k;
+    h+='<select class="addv" data-k="'+i+'">'+tabOptions(ci>=0?Number(S.addVals[ci]):0,f.max)+'</select>';
+  }
+  else h+='<input class="addv" data-k="'+i+'" data-kind="num" type="number" min="'+f.min+'" max="'+f.max+'" value="'+esc(S.addVals[i])+'">';
+  return h+'<div class="rg">'+f.min+' ~ '+fmt(f.max)+'</div></div>';
+}
+function addSummary(a){
+  var d=E.describeAddProp(a.id);
+  if(!d) return '';
+  return d.fields.map(function(f,i){
+    var v=a.values[i];
+    if(f.kind==='skill') return ADD.skills_cn[v]||ADD.skills_en[v]||('#'+v);
+    if(f.kind==='class') return (ADD.classes_cn||[])[v]||('#'+v);
+    if(f.kind==='tab') return '技能系'+v;
+    return String(v);
+  }).join(' / ');
+}
+function addPanelHtml(it){
+  var mine=S.adds.filter(function(a){return a.item===it.start_byte});
+  var h='<div class="addbox" id="add-panel"><div class="addbox-h">'+
+    '<b>＋ 添加技能 / 词条属性</b>'+
+    '<span class="tip">目标：'+esc(it.display_name)+' · 保存时写入，文件会相应变长</span>'+
+    '<span class="cnt">本装备待添加 '+mine.length+' 条</span></div>';
+  if(!it.can_add_props){
+    return h+'<div class="add-disabled">该物品没有可写的属性列表（简易物品、金币、药水、耳朵等），无法添加属性。</div></div>';
+  }
+  h+='<div class="addbox-b"><div class="addcats">'+
+    CATS.map(function(c){return '<button class="addcat'+(S.addCat===c[0]?' on':'')+'" data-cat="'+c[0]+'">'+c[1]+'</button>'}).join('')+'</div>';
+  var opts=addOptions(), d=ensureAddId();
+  h+='<div class="addrow"><input id="add-q" type="text" placeholder="搜索中文名 / 英文名 / ID" value="'+esc(S.addQ)+'">'+
+    '<select id="add-prop">'+opts.map(function(p){
+      return '<option value="'+p.id+'"'+(p.id===S.addId?' selected':'')+'>#'+p.id+' '+esc(p.cn)+' · '+esc(p.s)+'</option>';
+    }).join('')+'</select></div>';
+  if(!d) h+='<div class="addnote">没有匹配的属性，换个关键词或分类试试。</div>';
+  else{
+    h+='<div class="addnote">'+esc(d.en)+' · 属性 ID '+d.id+(d.np>1?' · 属性组 '+d.np+' 项':'')+'。所有数值按位宽自动限制。</div>';
+    h+='<div class="addfields">'+d.fields.map(function(f,i){return addFieldHtml(f,i,d)}).join('')+'</div>';
+    h+='<button class="btn btn-sm" id="add-join" style="border-color:var(--blue);color:var(--blue)">＋ 加入待添加列表</button>';
+  }
+  if(mine.length){
+    h+='<div class="addlist"><h4>待添加（点底部「保存并下载」后一起写入）</h4>';
+    mine.forEach(function(a){
+      var idx=S.adds.indexOf(a), dd=E.describeAddProp(a.id);
+      h+='<div class="additem"><span class="nm">'+esc(dd?dd.cn:a.id)+'</span>'+
+        '<span class="vv">'+esc(addSummary(a))+'</span>'+
+        '<button class="x" data-add-del="'+idx+'" title="移除">×</button></div>';
+    });
+    h+='<button class="btn btn-sm" id="add-clear" style="margin-top:4px">清空本装备</button></div>';
+  }
+  return h+'</div></div>';
+}
+function bindAddValues(){
+  $$('#add-panel .addv').forEach(function(el){
+    var k=+el.dataset.k;
+    if(S.addVals[k]!=null) el.value=S.addVals[k];
+  });
+}
+function refreshAdd(it,focusQ){
+  if(!it) return;
+  var el=document.getElementById('add-panel');
+  if(!el){renderDetail();return}
+  el.outerHTML=addPanelHtml(it);
+  bindAddValues();
+  if(focusQ){
+    var q=document.getElementById('add-q');
+    if(q){q.focus();try{q.setSelectionRange(q.value.length,q.value.length)}catch(e){}}
+  }
+}
+
 /* ---- render: equipment detail ---- */
 function baseField(label,en,a){
   if(!a) return '';
@@ -413,6 +574,7 @@ function renderDetail(){
       (it.base_name_en&&it.base_name_en!==it.base_name?' <span style="color:var(--tx3);font-family:var(--mono)">'+esc(it.base_name_en)+'</span>':'')+
       ' <span class="qtag" style="background:var(--panel2);color:var(--tx2);border:1px solid var(--line)">'+esc(it.quality_cn||'—')+'</span> · '+esc(it.location_text)+' · '+esc(src)+
     (it.ethereal?' · <span style="color:var(--blue)">无形的</span>':'')+(it.socketed?' · 有孔':'')+'</div></div>'+
+    (it.can_add_props?'<button class="btn btn-sm" data-goadd="1" style="border-color:var(--blue);color:var(--blue)">＋ 添加技能 / 词条</button>':'')+
     '<button class="btn btn-sm" data-maxall="'+it._i+'">本装备全部最大化</button></div>';
   h+='<div class="eq-body">';
   // base fields
@@ -447,14 +609,16 @@ function renderDetail(){
     });
     h+='</tbody></table>';
   });
+  h+=addPanelHtml(it);
   h+='</div>';
   $('#eq-detail').innerHTML=h;
+  bindAddValues();
 }
 
 /* ---- count / tabs ---- */
 function updateCount(){
-  var n=Object.keys(S.edits).length;
-  $('#edit-count').textContent=n;
+  $('#edit-count').textContent=Object.keys(S.edits).length;
+  var ac=$('#add-count'); if(ac) ac.textContent=S.adds.length;
   $('#save').disabled=!S.bytes;
 }
 function switchTab(t){
@@ -471,6 +635,7 @@ function loadFile(f){
       var buf=new Uint8Array(rd.result);
       var res=E.parse(buf);
       S.bytes=buf;S.res=res;S.name=f.name;S.edits={};S.sel=-1;
+      S.adds=[];S.addQ='';S.addCat='skill';S.addId=127;S.addVals=[];
       S.items=collectItems();
       $('#drop').style.display='none';
       $('#app').style.display='';$('#bar').style.display='';
@@ -490,7 +655,7 @@ function loadFile(f){
 function save(){
   if(!S.bytes) return;
   var list=Object.keys(S.edits).map(function(k){return S.edits[k]});
-  if(!list.length){toast('还没有任何修改');return}
+  if(!list.length && !S.adds.length){toast('还没有任何修改');return}
   var edits=list.map(function(e){
     return {anchor:e.anchor, value: e.anchor.kind==='propval'? e.vals : e.vals[0]};
   });
@@ -498,11 +663,14 @@ function save(){
   list.forEach(function(e){
     if(e.anchor.kind==='attr' && e.anchor.id===12) levelSync=Number(e.vals[0]);
   });
+  var additions=S.adds.map(function(a){
+    return {item:a.item, id:a.id, values:a.values};
+  });
   try{
-    var out=E.applyEdits(S.bytes,edits,levelSync);
+    var out=E.save(S.bytes,{edits:edits,additions:additions,levelSync:levelSync});
     // verify the output re-parses cleanly before offering the download
     var chk=E.parse(out);
-    if(!chk.ok) throw new Error('保存后结构校验未通过');
+    if(!chk.ok||!chk.checksum_ok) throw new Error('保存后结构校验未通过');
     var blob=new Blob([out],{type:'application/octet-stream'});
     var url=URL.createObjectURL(blob);
     var a=document.createElement('a');
@@ -510,7 +678,9 @@ function save(){
     a.href=url;a.download=base+'_mod.d2s';
     document.body.appendChild(a);a.click();document.body.removeChild(a);
     setTimeout(function(){URL.revokeObjectURL(url)},3000);
-    toast('已保存 '+a.download+' · '+list.length+' 项修改 · 校验通过');
+    var delta=out.length-S.bytes.length;
+    toast('已保存 '+a.download+' · '+list.length+' 项修改 + '+S.adds.length+' 条新增属性 · '+
+      (delta>0?'+':'')+delta+' 字节 · 校验通过');
   }catch(e){toast('保存失败：'+e.message,true);console.error(e)}
 }
 
@@ -535,6 +705,18 @@ $('#eq-scroll').addEventListener('click',function(e){
 /* delegated input / button handling for all editable fields */
 document.addEventListener('input',function(e){
   var el=e.target;
+  /* add-property panel: keep state without a full detail re-render */
+  if(el.id==='add-q'){
+    S.addQ=el.value;
+    refreshAdd(S.items[S.sel],true);
+    return;
+  }
+  if(el.classList.contains('addv')){
+    var k=+el.dataset.k;
+    var v=el.getAttribute('type')==='number'?parseFloat(el.value):parseInt(el.value,10);
+    if(!isNaN(v)) S.addVals[k]=v;
+    return;
+  }
   if(!el.classList.contains('num')) return;
   var off=+el.dataset.off, idx=+el.dataset.idx;
   var a=null;
@@ -552,6 +734,23 @@ document.addEventListener('input',function(e){
 });
 document.addEventListener('change',function(e){
   var el=e.target;
+  /* add-property panel */
+  if(el.id==='add-prop'){
+    S.addId=+el.value;
+    var nd=E.describeAddProp(S.addId);
+    S.addVals=nd?nd.defaults.slice():[];
+    refreshAdd(S.items[S.sel]);
+    return;
+  }
+  if(el.classList.contains('addv')){
+    var ak=+el.dataset.k, av=parseInt(el.value,10);
+    if(!isNaN(av)) S.addVals[ak]=av;
+    if(el.dataset.kind==='num'){
+      var ad=E.describeAddProp(S.addId), af=ad&&ad.fields[ak];
+      if(af){var cv=Math.max(af.min,Math.min(af.max,Math.round(isNaN(av)?af.def:av)));S.addVals[ak]=cv;el.value=cv}
+    } else if(el.dataset.kind==='class') refreshAdd(S.items[S.sel]);
+    return;
+  }
   if(el.classList.contains('num')){
     var off=+el.dataset.off,idx=+el.dataset.idx,a=null;
     for(var i=0;i<S.res.fields.length;i++){if(S.res.fields[i].off===off){a=S.res.fields[i];break}}
@@ -564,6 +763,32 @@ document.addEventListener('change',function(e){
   }
 });
 document.addEventListener('click',function(e){
+  /* add-property panel */
+  var ga=e.target.closest('[data-goadd]');
+  if(ga){
+    var ap=document.getElementById('add-panel');
+    if(ap) ap.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  var cat=e.target.closest('[data-cat]');
+  if(cat){S.addCat=cat.dataset.cat;S.addId=0;refreshAdd(S.items[S.sel]);return}
+  if(e.target.closest('#add-join')){
+    var nd=E.describeAddProp(S.addId), it=S.items[S.sel];
+    if(!nd||!it) return;
+    var vals=E.normalizeAddValues(S.addId,S.addVals);
+    S.addVals=vals.slice();
+    S.adds.push({item:it.start_byte,name:it.display_name,id:S.addId,values:vals});
+    updateCount();refreshAdd(it);
+    toast('已加入待添加：'+nd.cn+'（共 '+S.adds.length+' 条）');
+    return;
+  }
+  var del=e.target.closest('[data-add-del]');
+  if(del){S.adds.splice(+del.dataset.addDel,1);updateCount();refreshAdd(S.items[S.sel]);return}
+  if(e.target.closest('#add-clear')){
+    var ci=S.items[S.sel];
+    if(ci) S.adds=S.adds.filter(function(a){return a.item!==ci.start_byte});
+    updateCount();refreshAdd(ci);return;
+  }
   var b=e.target.closest('[data-max]');
   if(b){
     var off=+b.dataset.max,a=null;
@@ -598,7 +823,7 @@ document.addEventListener('click',function(e){
     renderAttrs();return;
   }
   if(e.target.closest('[data-reset]')||e.target.closest('#reset-all')){
-    S.edits={};renderAttrs();renderDetail();updateCount();toast('已还原全部修改');return;
+    S.edits={};S.adds=[];renderAttrs();renderDetail();updateCount();toast('已还原全部修改与待添加项');return;
   }
 });
 $('#save').addEventListener('click',save);
