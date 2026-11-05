@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>暗黑破坏神 II 存档修改器 · 1.13c</title>
+<style>
+:root{
+  --bg:#f5f4f0; --panel:#ffffff; --panel2:#faf9f6; --line:#e3e0d8; --line2:#d3cfc4;
+  --tx:#2b2823; --tx2:#6b655a; --tx3:#989184;
+  --red:#8a2626; --red-l:#f6eaea; --gold:#9a7412; --gold-l:#faf3de;
+  --blue:#2b5f9e; --blue-l:#eaf1fa; --green:#2f6b45; --green-l:#e9f3ec;
+  --purple:#6b3f8f; --purple-l:#f2eaf8; --orange:#a05a1a; --orange-l:#fbefe1;
+  --shadow:0 1px 2px rgba(40,35,25,.05),0 4px 14px rgba(40,35,25,.04);
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px 120px}
+
+/* ---------- header ---------- */
+header{background:linear-gradient(180deg,#fff 0%,#fbfaf6 100%);border-bottom:1px solid var(--line);border-top:3px solid var(--red)}
+.hd{max-width:1240px;margin:0 auto;padding:20px 20px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{width:42px;height:42px;border-radius:9px;background:linear-gradient(145deg,#8a2626,#5c1616);color:#e8cf9a;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;font-family:Georgia,serif;box-shadow:0 2px 8px rgba(138,38,38,.22)}
+.htx h1{margin:0;font-size:19px;font-weight:650;letter-spacing:.3px}
+.htx p{margin:2px 0 0;font-size:12px;color:var(--tx2)}
+.badge-ver{margin-left:auto;background:var(--gold-l);color:var(--gold);border:1px solid #e8d9ad;padding:5px 11px;border-radius:20px;font-size:11.5px;font-weight:600;letter-spacing:.4px}
+
+/* ---------- upload ---------- */
+.drop{margin-top:22px;background:var(--panel);border:1.5px dashed var(--line2);border-radius:12px;padding:30px 24px;text-align:center;transition:.18s;cursor:pointer}
+.drop:hover,.drop.over{border-color:var(--red);background:var(--red-l)}
+.drop-ic{font-size:30px;color:var(--red);line-height:1}
+.drop h2{margin:10px 0 4px;font-size:16px;font-weight:600}
+.drop p{margin:0;color:var(--tx2);font-size:12.5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line2);background:#fff;color:var(--tx);padding:7px 14px;border-radius:7px;font-size:13px;cursor:pointer;font-weight:500;transition:.15s;font-family:inherit}
+.btn:hover{border-color:var(--tx3);background:#faf9f6}
+.btn-primary{background:var(--red);border-color:var(--red);color:#fff}
+.btn-primary:hover{background:#742020;border-color:#742020}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-sm{padding:4px 9px;font-size:11.5px;border-radius:5px}
+.btn-max{font-family:var(--mono);font-size:10.5px;padding:3px 7px;color:var(--gold);border-color:#e2d3a8;background:var(--gold-l)}
+.btn-max:hover{background:#f3e6c4;border-color:#d4bd83}
+.drop .btn{margin-top:14px}
+input[type=file]{display:none}
+
+/* ---------- info bar ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+.info{margin-top:18px;padding:16px 18px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.avatar{width:46px;height:46px;border-radius:9px;background:var(--red-l);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
+.info-main{min-width:190px}
+.info-main .nm{font-size:17px;font-weight:650}
+.info-main .sub{font-size:12px;color:var(--tx2)}
+.kv{display:flex;flex-direction:column;gap:1px;padding-left:18px;border-left:1px solid var(--line)}
+.kv .k{font-size:11px;color:var(--tx3)}
+.kv .v{font-size:14px;font-weight:600;font-family:var(--mono)}
+.checks{margin-left:auto;display:flex;gap:7px;flex-wrap:wrap}
+.chip{font-size:11px;padding:4px 9px;border-radius:5px;border:1px solid;font-weight:500;white-space:nowrap}
+.chip.ok{background:var(--green-l);color:var(--green);border-color:#c6e0ce}
+.chip.bad{background:var(--red-l);color:var(--red);border-color:#e8c4c4}
+.chip.warn{background:var(--orange-l);color:var(--orange);border-color:#edd5b8}
+.chip.neutral{background:var(--panel2);color:var(--tx2);border-color:var(--line)}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:2px;margin-top:20px;border-bottom:1px solid var(--line2)}
+.tab{padding:10px 20px;font-size:14px;font-weight:550;color:var(--tx2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;user-select:none;white-space:nowrap}
+.tab:hover{color:var(--tx)}
+.tab.on{color:var(--red);border-bottom-color:var(--red)}
+.tab .cnt{font-size:11px;font-family:var(--mono);background:var(--panel2);border:1px solid var(--line);padding:1px 6px;border-radius:9px;margin-left:6px;color:var(--tx2)}
+.page{display:none;padding-top:18px}
+.page.on{display:block}
+
+/* ---------- section head ---------- */
+.sechead{display:flex;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.sechead h3{margin:0;font-size:15px;font-weight:620}
+.sechead .desc{font-size:12px;color:var(--tx2)}
+.sechead .sp{flex:1}
+.hint{background:var(--blue-l);border:1px solid #d5e3f3;color:#31557f;padding:9px 13px;border-radius:7px;font-size:12.5px;line-height:1.65;margin-bottom:14px}
+.hint b{color:#264a75}
+.warnbox{background:var(--gold-l);border:1px solid #ecdfb8;color:#7b5c10;padding:9px 13px;border-radius:7px;font-size:12.5px;line-height:1.65;margin-bottom:14px}
+
+/* ---------- attribute grid ---------- */
+.attr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:11px}
+.attr{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:12px 13px;box-shadow:var(--shadow);transition:.15s}
+.attr.changed{border-color:#d9b96a;background:#fffdf6;box-shadow:0 0 0 2px rgba(154,116,18,.08)}
+.attr .top{display:flex;align-items:baseline;gap:7px}
+.attr .cn{font-size:13.5px;font-weight:600}
+.attr .en{font-size:10.5px;color:var(--tx3);font-family:var(--mono)}
+.attr .row{display:flex;align-items:center;gap:7px;margin-top:9px}
+.attr .orig{font-size:11px;color:var(--tx3);font-family:var(--mono);min-width:64px}
+input.num{width:100%;min-width:0;border:1px solid var(--line2);border-radius:6px;padding:6px 9px;font:13px var(--mono);color:var(--tx);background:var(--panel2);outline:none;transition:.15s}
+input.num:focus{border-color:var(--red);background:#fff;box-shadow:0 0 0 3px rgba(138,38,38,.08)}
+input.num.changed{border-color:#d9b96a;background:#fff}
+.attr .range{font-size:10.5px;color:var(--tx3);margin-top:6px;font-family:var(--mono)}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+
+/* ---------- equipment layout ---------- */
+.eq{display:grid;grid-template-columns:310px 1fr;gap:14px;align-items:start}
+.eq-list{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}
+.eq-tools{padding:10px;border-bottom:1px solid var(--line);background:var(--panel2)}
+.eq-tools input,.eq-tools select{width:100%;border:1px solid var(--line2);border-radius:6px;padding:6px 9px;font:12.5px inherit;font-family:inherit;background:#fff;color:var(--tx);outline:none}
+.eq-tools input:focus,.eq-tools select:focus{border-color:var(--red)}
+.eq-tools .r{margin-top:7px;display:flex;gap:6px}
+.eq-tools select{width:auto;flex:1}
+.eq-scroll{max-height:660px;overflow-y:auto}
+.eq-item{padding:9px 11px;border-bottom:1px solid #f0eee8;cursor:pointer;display:flex;gap:9px;align-items:flex-start;transition:.12s}
+.eq-item:last-child{border-bottom:0}
+.eq-item:hover{background:var(--panel2)}
+.eq-item.on{background:var(--red-l);box-shadow:inset 3px 0 0 var(--red)}
+.eq-ic{width:28px;height:28px;flex:0 0 28px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--mono);color:var(--tx2);text-transform:uppercase}
+.eq-ic.q7{background:var(--gold-l);border-color:#e6d5a6;color:var(--gold)}
+.eq-ic.q5{background:var(--green-l);border-color:#c9e0d0;color:var(--green)}
+.eq-ic.q4{background:var(--blue-l);border-color:#cfdff2;color:var(--blue)}
+.eq-ic.q6{background:#f7f4dd;border-color:#e5dda8;color:#8a7a20}
+.eq-ic.q8{background:var(--orange-l);border-color:#eccfae;color:var(--orange)}
+.eq-tx{min-width:0;flex:1}
+.eq-nm{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eq-meta{font-size:10.5px;color:var(--tx3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eq-badge{font-size:10px;font-family:var(--mono);color:var(--tx3);padding-top:3px}
+.eq-detail{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);min-height:400px}
+.eq-empty{padding:70px 20px;text-align:center;color:var(--tx3);font-size:13px}
+.eq-head{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.eq-head .t{font-size:16px;font-weight:650}
+.eq-head .m{font-size:11.5px;color:var(--tx2);margin-top:2px}
+.qtag{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}
+.eq-body{padding:14px 18px 18px}
+.subhead{font-size:12px;font-weight:650;color:var(--tx2);letter-spacing:.5px;margin:18px 0 9px;padding-bottom:6px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.subhead:first-child{margin-top:0}
+.subhead .n{font-family:var(--mono);font-size:11px;color:var(--tx3);font-weight:400}
+.base-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:9px}
+.base{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:9px 10px}
+.base .l{font-size:11.5px;color:var(--tx2);margin-bottom:6px;display:flex;justify-content:space-between}
+.base .l span{font-family:var(--mono);color:var(--tx3);font-size:10.5px}
+.base .r{display:flex;gap:6px;align-items:center}
+table.props{width:100%;border-collapse:collapse;font-size:12.5px}
+table.props th{text-align:left;font-size:11px;color:var(--tx3);font-weight:600;padding:7px 8px;border-bottom:1px solid var(--line2);white-space:nowrap}
+table.props td{padding:6px 8px;border-bottom:1px solid #f0eee8;vertical-align:middle}
+table.props tr:last-child td{border-bottom:0}
+table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;color:var(--tx2);letter-spacing:.3px}
+.pname{font-weight:550}
+.pen{font-size:10px;color:var(--tx3);font-family:var(--mono);display:block;line-height:1.3}
+.pval{font-family:var(--mono);color:var(--tx2);font-size:12px}
+.pedit{display:flex;gap:5px;align-items:center}
+.pedit input.num{padding:5px 7px;font-size:12px;width:92px}
+.prange{font-size:10px;color:var(--tx3);font-family:var(--mono);white-space:nowrap}
+.param{font-size:10.5px;color:var(--tx3);font-family:var(--mono)}
+.noprops{color:var(--tx3);font-size:12.5px;padding:14px 0;text-align:center}
+
+/* ---------- bottom bar ---------- */
+.bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line2);z-index:20;box-shadow:0 -3px 14px rgba(40,35,25,.05)}
+.bar-in{max-width:1240px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar .st{font-size:12.5px;color:var(--tx2)}
+.bar .st b{font-family:var(--mono);color:var(--red);font-size:15px}
+.bar .sp{flex:1}
+.bar .btn{padding:9px 17px}
+
+/* ---------- help ---------- */
+.help{margin-top:26px;padding:18px 20px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+.help h3{margin:0 0 10px;font-size:14px;font-weight:650}
+.help ul{margin:0;padding-left:19px;color:var(--tx2);font-size:12.5px;line-height:1.9}
+.help li b{color:var(--tx)}
+.help code{background:var(--panel2);border:1px solid var(--line);padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:11.5px;color:var(--red)}
+.foot{text-align:center;color:var(--tx3);font-size:11px;margin-top:22px}
+.toast{position:fixed;top:auto;bottom:74px;right:24px;transform:translateY(12px);background:#2b2823;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:50;box-shadow:0 6px 20px rgba(0,0,0,.18);max-width:min(420px,calc(100vw - 48px))}
+.toast.on{opacity:1;transform:translateY(0)}
+.toast.err{background:#8a2626}
+@media(max-width:860px){.eq{grid-template-columns:1fr}.eq-scroll{max-height:280px}.checks{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="hd">
+    <div class="logo">D2</div>
+    <div class="htx">
+      <h1>暗黑破坏神 II 存档修改器</h1>
+      <p>直接修改人物属性与装备属性 · 原位位改写 · 自动重算校验和</p>
+    </div>
+    <span class="badge-ver">仅支持 1.13c · .d2s</span>
+  </div>
+</header>
+
+<div id="drop" class="drop">
+  <div class="drop-ic">&#9670;</div>
+  <h2>拖入 .d2s 存档文件，或点击选择</h2>
+  <p>文件仅在本地浏览器内处理，不会上传到任何服务器</p>
+  <button class="btn btn-primary" id="pick">选择存档文件</button>
+  <input type="file" id="file" accept=".d2s,application/octet-stream">
+</div>
+
+<div id="app" style="display:none">
+  <div class="card info" id="info"></div>
+
+  <div class="tabs">
+    <div class="tab on" data-tab="attrs">人物属性 <span class="cnt" id="cnt-attr">0</span></div>
+    <div class="tab" data-tab="equip">装备属性 <span class="cnt" id="cnt-item">0</span></div>
+    <div class="tab" data-tab="help">使用说明</div>
+  </div>
+
+  <!-- 人物属性 -->
+  <div class="page on" id="page-attrs">
+    <div class="hint">
+      数值为存档中实际存储值。<b>生命 / 法力 / 耐力</b>为 8.8 定点数，此处显示整数部分。
+      <b>等级</b>修改会自动同步文件头中的等级字节；经验值需自行与等级匹配。
+      所有输入都会按字段位宽自动限制在合法范围内。
+    </div>
+    <div class="presets">
+      <button class="btn btn-sm" data-preset="lvl99">等级设为 99</button>
+      <button class="btn btn-sm" data-preset="gold">金币全满</button>
+      <button class="btn btn-sm" data-preset="points">属性点 / 技能点 各 255</button>
+      <button class="btn btn-sm" data-preset="allmax">全部属性设为上限</button>
+      <button class="btn btn-sm" data-reset>还原本次修改</button>
+    </div>
+    <div class="sechead"><h3>人物属性</h3><span class="desc" id="attr-sub"></span></div>
+    <div class="attr-grid" id="attr-grid"></div>
+  </div>
+
+  <!-- 装备属性 -->
+  <div class="page" id="page-equip">
+    <div class="warnbox">
+      装备数值修改采用<b>原位位改写</b>：只覆写数值所在的位，不改变属性条数或装备结构，因此文件大小不变、其余字节完全保留。
+      数值请勿超过字段上限（界面已自动限制）；过大的数值在游戏内可能显示异常。
+    </div>
+    <div class="eq">
+      <div class="eq-list">
+        <div class="eq-tools">
+          <input type="text" id="q" placeholder="搜索装备名 / 类型 / 属性…">
+          <div class="r">
+            <select id="fq"><option value="">全部品质</option><option value="7">暗金</option><option value="5">套装</option><option value="6">稀有</option><option value="4">魔法</option><option value="8">手工</option><option value="2">普通</option></select>
+            <select id="fs"><option value="">全部来源</option><option value="char">人物</option><option value="merc">雇佣兵</option><option value="corpse">尸体</option><option value="golem">石魔</option></select>
+          </div>
+        </div>
+        <div class="eq-scroll" id="eq-scroll"></div>
+      </div>
+      <div class="eq-detail" id="eq-detail"><div class="eq-empty">从左侧选择一件装备查看并修改属性</div></div>
+    </div>
+  </div>
+
+  <!-- 说明 -->
+  <div class="page" id="page-help">
+    <div class="help">
+      <h3>工作原理</h3>
+      <ul>
+        <li>本工具按 <b>Diablo II 1.13c 存档格式</b>逐位解析文件：固定 765 字节头部 → <code>gf</code> 人物属性段 → <code>if</code> 技能段 → <code>JM</code> 物品列表 → 尸体 → <code>jf</code> 雇佣兵 → <code>kf</code> 石魔。</li>
+        <li>解析时为每个可编辑数值记录<b>位偏移量与位宽</b>；保存时只把这些位写回文件副本，随后重算<b>文件长度</b>与<b>校验和</b>（D2S 标准累加算法）。因此<b>不改变装备结构、不增删属性、文件大小恒定</b>，未知字节原样保留。</li>
+        <li>魔法属性按 1.13c 的 <code>ItemStatCost</code> 位宽（Save Bits / Save Add / Save Param Bits / Encode）解码，已处理充能技能、技能参数、8.8 定点生命等特殊情况。</li>
+        <li>物品、魔法词缀、暗金与套装名称取自游戏中文版字符串表（<code>string.tbl</code> / <code>expansionstring.tbl</code> / <code>patchstring.tbl</code>），已由繁体转为简体。列表与详情同时保留英文原名，<b>搜索框支持中英文混搜</b>；个别未被汉化的条目自动回退英文。</li>
+      </ul>
+      <h3 style="margin-top:18px">使用步骤</h3>
+      <ul>
+        <li><b>先备份</b>原存档（例如复制一份 <code>leiya.d2s.bak</code>），再修改。</li>
+        <li>分别在「人物属性」「装备属性」页修改数值，底部会显示改动项数。</li>
+        <li>点「保存并下载」，得到 <code>原文件名_mod.d2s</code>，<b>改名回原文件名</b>后覆盖游戏 <code>Save</code> 目录中的原档即可。</li>
+        <li>建议<b>退出游戏后</b>再替换文件，避免游戏退出时回写覆盖修改结果。</li>
+      </ul>
+      <h3 style="margin-top:18px">适用范围与注意</h3>
+      <ul>
+        <li>核心修改目标是 <code>.d2s</code> 人物存档。同目录下的 <code>.d2x / .key / .ma0~.ma3 / .map / .UDI</code> 属于共享仓库、按键与地图数据，本工具不处理。</li>
+        <li>不支持 1.14 / 重制版（D2R）、以及 <code>.d2i</code> 等独立物品文件；加载时会校验魔数与版本。</li>
+        <li>「全部设为上限」会把等级也设为位宽上限（127），游戏内可能异常，建议等级用「等级设为 99」。</li>
+        <li>若原始存档校验和本就不匹配（曾被其他工具改过），仍可编辑；保存时会重算为正确值。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="foot">本地离线工具 · 存档数据不离开你的电脑 · 请遵守游戏使用条款，仅用于单机存档</div>
+</div>
+
+<div class="bar" id="bar" style="display:none">
+  <div class="bar-in">
+    <div class="st">已修改 <b id="edit-count">0</b> 项</div>
+    <div class="sp"></div>
+    <button class="btn" id="reset-all">还原全部</button>
+    <button class="btn" id="reload">选择其他文件</button>
+    <button class="btn btn-primary" id="save">保存并下载 .d2s</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script id="d2s-data" type="application/json">__D2S_DATA_JSON__</script>
+<script>__D2S_ENGINE_JS__</script>
+<script>
+(function(){
+'use strict';
+var DATA = JSON.parse(document.getElementById('d2s-data').textContent);
+var E = D2SEngine.makeEngine(DATA);
+var S = { bytes:null, res:null, name:'', edits:{}, tab:'attrs', sel:-1, items:[] };
+
+function $(s){return document.querySelector(s)}
+function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+var toastT=null;
+function toast(msg,err){var t=$('#toast');t.textContent=msg;t.className='toast on'+(err?' err':'');clearTimeout(toastT);toastT=setTimeout(function(){t.className='toast'},2300)}
+
+/* ---- display value of an anchor (always an array) ---- */
+function disp(a){
+  if(a.kind==='propval') return E.decodeVal(a);
+  if(a.kind==='attr') return [a.raw >> (a.shift||0)];
+  return [a.raw - (a.sA||0)];
+}
+function curVals(a){
+  var e=S.edits[a.off];
+  return e ? e.vals.slice() : disp(a);
+}
+function isChanged(a){
+  var e=S.edits[a.off];
+  return !!e;
+}
+function setEdit(a, vals){
+  var orig=disp(a);
+  var same = orig.length===vals.length && orig.every(function(v,i){return Number(v)===Number(vals[i])});
+  if(same) delete S.edits[a.off];
+  else S.edits[a.off]={anchor:a, vals:vals};
+  updateCount();
+}
+function range(a){return E.fieldRange(a)}
+function rangeText(a){var r=range(a);return r.min+' ~ '+fmt(r.max)}
+
+/* ---- input builder ---- */
+function numInput(a, idx, width){
+  var r=range(a), v=curVals(a)[idx];
+  return '<input type="number" class="num'+(isChanged(a)?' changed':'')+'" data-off="'+a.off+'" data-idx="'+idx+'" value="'+v+'" min="'+r.min+'" max="'+r.max+'" step="1"'+(width?' style="width:'+width+'px"':'')+'>';
+}
+function maxBtn(a){return '<button class="btn btn-max" data-max="'+a.off+'" title="设为上限">MAX</button>'}
+
+/* ---- render: info ---- */
+function renderInfo(){
+  var r=S.res, cs=(r.checksum_field>>>0).toString(16).padStart(8,'0');
+  var chips='';
+  chips+='<span class="chip '+(r.magic===0xaa55aa55?'ok':'bad')+'">魔数 '+(r.magic===0xaa55aa55?'正常':'异常')+'</span>';
+  chips+='<span class="chip '+(r.version===0x60?'ok':'bad')+'">版本 '+(r.version===0x60?'1.13c':'0x'+r.version.toString(16))+'</span>';
+  chips+='<span class="chip '+(r.ok?'ok':'bad')+'">结构 '+(r.ok?'精确对齐 EOF':r.end_byte+'/'+r.size)+'</span>';
+  chips+='<span class="chip '+(r.checksum_ok?'ok':'warn')+'">校验和 '+(r.checksum_ok?'有效 '+cs:'已重算')+'</span>';
+  $('#info').innerHTML=
+    '<div class="avatar">'+esc((r.name||'?').charAt(0).toUpperCase())+'</div>'+
+    '<div class="info-main"><div class="nm">'+esc(r.name)+'</div><div class="sub">'+esc(r.class_name)+(r.hardcore?' · 专家模式':'')+(r.expansion?' · 资料片':'')+'</div></div>'+
+    '<div class="kv"><span class="k">等级</span><span class="v">'+r.level_byte+'</span></div>'+
+    '<div class="kv"><span class="k">文件大小</span><span class="v">'+fmt(r.size)+' B</span></div>'+
+    '<div class="kv"><span class="k">装备 / 属性条</span><span class="v">'+r.item_count+' / '+r.fields.length+'</span></div>'+
+    '<div class="checks">'+chips+'</div>';
+}
+
+/* ---- render: attributes ---- */
+function renderAttrs(){
+  var html='';
+  S.res.attributes.forEach(function(a){
+    var an=a.anchor, vals=curVals(an), ch=isChanged(an);
+    html+='<div class="attr'+(ch?' changed':'')+'">'+
+      '<div class="top"><span class="cn">'+esc(a.cn)+'</span><span class="en">'+esc(a.en)+'</span></div>'+
+      '<div class="row"><span class="orig">原 '+fmt(a.value)+'</span>'+numInput(an,0)+maxBtn(an)+'</div>'+
+      '<div class="range">范围 '+rangeText(an)+' · '+an.bits+' bit'+(a.id===12?' · 同步文件头':'')+'</div>'+
+    '</div>';
+  });
+  $('#attr-grid').innerHTML=html;
+  $('#cnt-attr').textContent=S.res.attributes.length;
+  $('#attr-sub').textContent='共 '+S.res.attributes.length+' 项可编辑字段';
+}
+
+/* ---- render: equipment list ---- */
+function collectItems(){
+  var out=E.flatten(S.res.items);
+  S.res.corpses.forEach(function(c){E.flatten(c,out)});
+  E.flatten(S.res.merc_items,out);
+  if(S.res.golem_item){out.push(S.res.golem_item)}
+  out.forEach(function(it,i){it._i=i});
+  return out;
+}
+function itemMatches(it,q,fq,fs){
+  if(fq && String(it.quality)!==fq) return false;
+  if(fs && it.source!==fs) return false;
+  if(!q) return true;
+  var s=(it.display_name+' '+(it.display_name_en||'')+' '+it.type+' '+it.base_name+' '+(it.base_name_en||'')+' '+it.location_text+' '+(it.quality_cn||'')).toLowerCase();
+  if(s.indexOf(q)>=0) return true;
+  var has=it.props.some(function(p){return (p.name+' '+(p.cn||'')).toLowerCase().indexOf(q)>=0});
+  return has;
+}
+function renderList(){
+  var q=$('#q').value.trim().toLowerCase(), fq=$('#fq').value, fs=$('#fs').value;
+  var html='',n=0;
+  S.items.forEach(function(it){
+    if(!itemMatches(it,q,fq,fs)) return;
+    n++;
+    var src={char:'人物',merc:'雇佣兵',corpse:'尸体',golem:'石魔'}[it.source]||it.source;
+    var pc=it.props.length;
+    html+='<div class="eq-item'+(S.sel===it._i?' on':'')+'" data-i="'+it._i+'">'+
+      '<div class="eq-ic q'+(it.quality||0)+'">'+esc((it.type||'?').slice(0,3))+'</div>'+
+      '<div class="eq-tx"><div class="eq-nm" title="'+esc(it.display_name_en||'')+'">'+esc((it.depth?'↳ ':'')+it.display_name)+'</div>'+
+      '<div class="eq-meta">'+esc(it.quality_cn||'—')+' · '+esc(it.location_text)+' · '+esc(src)+(it.level!=null?' · Lv'+it.level:'')+'</div></div>'+
+      '<div class="eq-badge">'+(pc?pc+' 条':'—')+'</div></div>';
+  });
+  $('#eq-scroll').innerHTML=html||'<div class="eq-empty" style="padding:30px 12px">没有匹配的装备</div>';
+  $('#cnt-item').textContent=S.items.length;
+}
+
+/* ---- render: equipment detail ---- */
+function baseField(label,en,a){
+  if(!a) return '';
+  return '<div class="base"><div class="l"><span>'+esc(label)+'</span><span>'+esc(en)+'</span></div>'+
+    '<div class="r">'+numInput(a,0)+maxBtn(a)+'</div></div>';
+}
+function renderDetail(){
+  var it=S.items[S.sel];
+  if(!it){$('#eq-detail').innerHTML='<div class="eq-empty">从左侧选择一件装备查看并修改属性</div>';return}
+  var src={char:'人物',merc:'雇佣兵',corpse:'尸体',golem:'石魔'}[it.source]||it.source;
+  var qcls='q'+(it.quality||0);
+  var h='<div class="eq-head"><div class="eq-ic '+qcls+'" style="width:34px;height:34px;flex:0 0 34px">'+esc((it.type||'?').slice(0,3))+'</div>'+
+    '<div style="flex:1;min-width:180px"><div class="t">'+esc(it.display_name)+
+      (it.display_name_en&&it.display_name_en!==it.display_name?' <span style="font-size:11px;font-weight:400;color:var(--tx3);font-family:var(--mono)">'+esc(it.display_name_en)+'</span>':'')+'</div>'+
+    '<div class="m">'+esc(it.base_name||it.type)+
+      (it.base_name_en&&it.base_name_en!==it.base_name?' <span style="color:var(--tx3);font-family:var(--mono)">'+esc(it.base_name_en)+'</span>':'')+
+      ' <span class="qtag" style="background:var(--panel2);color:var(--tx2);border:1px solid var(--line)">'+esc(it.quality_cn||'—')+'</span> · '+esc(it.location_text)+' · '+esc(src)+
+    (it.ethereal?' · <span style="color:var(--blue)">无形的</span>':'')+(it.socketed?' · 有孔':'')+'</div></div>'+
+    '<button class="btn btn-sm" data-maxall="'+it._i+'">本装备全部最大化</button></div>';
+  h+='<div class="eq-body">';
+  // base fields
+  var bases=[baseField('物品等级','ilvl',it.level_rec),baseField('防御值','defense',it.defense_rec),
+    baseField('最大耐久','max dur',it.maxdur_rec),baseField('当前耐久','cur dur',it.curdur_rec),
+    baseField('数量','quantity',it.quantity_rec),baseField('孔数','sockets',it.sockets_rec)];
+  var bhas=bases.filter(Boolean).join('');
+  if(bhas){h+='<div class="subhead">基础属性 <span class="n">'+bases.filter(Boolean).length+' 项</span></div><div class="base-grid">'+bhas+'</div>'}
+  // magic props
+  var groups={magic:'魔法属性',set:'套装加成',runeword:'符文之语属性'};
+  var byGroup={};
+  it.props.forEach(function(p){(byGroup[p.group]=byGroup[p.group]||[]).push(p)});
+  if(!it.props.length && !bhas){h+='<div class="noprops">该物品没有可编辑的数值字段（普通/无形基础物品或任务物品）</div>'}
+  Object.keys(groups).forEach(function(g){
+    var ps=byGroup[g]; if(!ps||!ps.length) return;
+    h+='<div class="subhead">'+groups[g]+' <span class="n">'+ps.length+' 条</span></div>';
+    h+='<table class="props"><thead><tr><th style="width:34%">属性</th><th style="width:13%">原值</th><th>新值</th><th style="width:20%">合法范围</th><th style="width:52px"></th></tr></thead><tbody>';
+    ps.forEach(function(p){
+      var a=p.values[0]; if(!a) return;
+      var d=disp(a), cv=curVals(a);
+      var name=p.cn?esc(p.cn):esc(p.name);
+      var en=p.cn?('<span class="pen">'+esc(p.name)+(p.sA?' · +'+p.sA:'')+'</span>'):'';
+      var inputs='';
+      if(a.e===3){inputs=numInput(a,0,72)+'<span style="font-size:10px;color:var(--tx3)">/</span>'+numInput(a,1,72)}
+      else inputs=numInput(a,0,110);
+      var param=p.params.length?'<div class="param">参数 '+p.params[0].raw+'（技能ID/等级位，保持原值）</div>':'';
+      h+='<tr><td><span class="pname">'+name+'</span>'+en+param+'</td>'+
+         '<td class="pval">'+d.map(fmt).join(' / ')+'</td>'+
+         '<td><div class="pedit">'+inputs+'</div></td>'+
+         '<td class="prange">'+rangeText(a)+'</td>'+
+         '<td>'+maxBtn(a)+'</td></tr>';
+    });
+    h+='</tbody></table>';
+  });
+  h+='</div>';
+  $('#eq-detail').innerHTML=h;
+}
+
+/* ---- count / tabs ---- */
+function updateCount(){
+  var n=Object.keys(S.edits).length;
+  $('#edit-count').textContent=n;
+  $('#save').disabled=!S.bytes;
+}
+function switchTab(t){
+  S.tab=t;
+  $$('.tab').forEach(function(e){e.classList.toggle('on',e.dataset.tab===t)});
+  $$('.page').forEach(function(e){e.classList.toggle('on',e.id==='page-'+t)});
+}
+
+/* ---- file load ---- */
+function loadFile(f){
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      var buf=new Uint8Array(rd.result);
+      var res=E.parse(buf);
+      S.bytes=buf;S.res=res;S.name=f.name;S.edits={};S.sel=-1;
+      S.items=collectItems();
+      $('#drop').style.display='none';
+      $('#app').style.display='';$('#bar').style.display='';
+      renderInfo();renderAttrs();renderList();updateCount();
+      if(!res.ok) toast('警告：解析未精确对齐文件末尾，请谨慎保存',true);
+      else toast('解析成功：'+res.name+' · '+res.item_count+' 件装备');
+    }catch(e){
+      toast('解析失败：'+e.message,true);
+      console.error(e);
+    }
+  };
+  rd.onerror=function(){toast('文件读取失败',true)};
+  rd.readAsArrayBuffer(f);
+}
+
+/* ---- save ---- */
+function save(){
+  if(!S.bytes) return;
+  var list=Object.keys(S.edits).map(function(k){return S.edits[k]});
+  if(!list.length){toast('还没有任何修改');return}
+  var edits=list.map(function(e){
+    return {anchor:e.anchor, value: e.anchor.kind==='propval'? e.vals : e.vals[0]};
+  });
+  var levelSync=null;
+  list.forEach(function(e){
+    if(e.anchor.kind==='attr' && e.anchor.id===12) levelSync=Number(e.vals[0]);
+  });
+  try{
+    var out=E.applyEdits(S.bytes,edits,levelSync);
+    // verify the output re-parses cleanly before offering the download
+    var chk=E.parse(out);
+    if(!chk.ok) throw new Error('保存后结构校验未通过');
+    var blob=new Blob([out],{type:'application/octet-stream'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    var base=S.name.replace(/\.d2s$/i,'');
+    a.href=url;a.download=base+'_mod.d2s';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url)},3000);
+    toast('已保存 '+a.download+' · '+list.length+' 项修改 · 校验通过');
+  }catch(e){toast('保存失败：'+e.message,true);console.error(e)}
+}
+
+/* ---- events ---- */
+$('#pick').addEventListener('click',function(e){e.stopPropagation();$('#file').click()});
+$('#file').addEventListener('change',function(e){if(e.target.files[0]) loadFile(e.target.files[0]);e.target.value=''});
+var drop=$('#drop');
+drop.addEventListener('click',function(){$('#file').click()});
+['dragenter','dragover'].forEach(function(t){drop.addEventListener(t,function(e){e.preventDefault();drop.classList.add('over')})});
+['dragleave','drop'].forEach(function(t){drop.addEventListener(t,function(e){e.preventDefault();drop.classList.remove('over')})});
+drop.addEventListener('drop',function(e){if(e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0])});
+
+$$('.tab').forEach(function(t){t.addEventListener('click',function(){switchTab(t.dataset.tab)})});
+$('#q').addEventListener('input',renderList);
+$('#fq').addEventListener('change',renderList);
+$('#fs').addEventListener('change',renderList);
+$('#eq-scroll').addEventListener('click',function(e){
+  var el=e.target.closest('.eq-item'); if(!el)return;
+  S.sel=+el.dataset.i;renderList();renderDetail();
+});
+
+/* delegated input / button handling for all editable fields */
+document.addEventListener('input',function(e){
+  var el=e.target;
+  if(!el.classList.contains('num')) return;
+  var off=+el.dataset.off, idx=+el.dataset.idx;
+  var a=null;
+  // find anchor by off across fields
+  for(var i=0;i<S.res.fields.length;i++){if(S.res.fields[i].off===off){a=S.res.fields[i];break}}
+  if(!a) return;
+  var r=range(a), v=parseFloat(el.value);
+  if(isNaN(v)) return;
+  v=Math.max(r.min,Math.min(r.max,Math.round(v)));
+  var vals=curVals(a); vals[idx]=v;
+  setEdit(a,vals);
+  // update visuals without full re-render (keeps caret)
+  el.classList.toggle('changed',isChanged(a));
+  var card=el.closest('.attr'); if(card) card.classList.toggle('changed',isChanged(a));
+});
+document.addEventListener('change',function(e){
+  var el=e.target;
+  if(el.classList.contains('num')){
+    var off=+el.dataset.off,idx=+el.dataset.idx,a=null;
+    for(var i=0;i<S.res.fields.length;i++){if(S.res.fields[i].off===off){a=S.res.fields[i];break}}
+    if(!a)return;
+    var r=range(a),v=parseFloat(el.value);
+    if(isNaN(v)){v=disp(a)[idx]}
+    v=Math.max(r.min,Math.min(r.max,Math.round(v)));
+    el.value=v;
+    if(S.tab==='attrs') renderAttrs(); else renderDetail();
+  }
+});
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-max]');
+  if(b){
+    var off=+b.dataset.max,a=null;
+    for(var i=0;i<S.res.fields.length;i++){if(S.res.fields[i].off===off){a=S.res.fields[i];break}}
+    if(!a)return;
+    var r=range(a),vals=curVals(a).map(function(){return r.max});
+    setEdit(a,vals);
+    if(S.tab==='attrs')renderAttrs();else renderDetail();
+    return;
+  }
+  var ma=e.target.closest('[data-maxall]');
+  if(ma){
+    var it=S.items[+ma.dataset.maxall];
+    if(it){
+      var touched=0;
+      function mx(a){if(!a)return;var r=range(a);setEdit(a,disp(a).map(function(){return r.max}));touched++}
+      mx(it.level_rec);mx(it.defense_rec);mx(it.maxdur_rec);mx(it.curdur_rec);mx(it.quantity_rec);mx(it.sockets_rec);
+      it.props.forEach(function(p){if(p.values[0])mx(p.values[0])});
+      renderDetail();toast('已最大化 '+touched+' 个数值字段');
+    }
+    return;
+  }
+  var pr=e.target.closest('[data-preset]');
+  if(pr){
+    var p=pr.dataset.preset, byId={};
+    S.res.attributes.forEach(function(x){byId[x.id]=x});
+    function setv(id,v){if(byId[id])setEdit(byId[id].anchor,[v])}
+    if(p==='lvl99'){setv(12,99);toast('等级设为 99（保存时同步文件头）')}
+    if(p==='gold'){setv(14,range(byId[14].anchor).max);setv(15,range(byId[15].anchor).max)}
+    if(p==='points'){setv(4,255);setv(5,255)}
+    if(p==='allmax'){S.res.attributes.forEach(function(x){setEdit(x.anchor,[range(x.anchor).max])})}
+    renderAttrs();return;
+  }
+  if(e.target.closest('[data-reset]')||e.target.closest('#reset-all')){
+    S.edits={};renderAttrs();renderDetail();updateCount();toast('已还原全部修改');return;
+  }
+});
+$('#save').addEventListener('click',save);
+$('#reload').addEventListener('click',function(){$('#file').click()});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+node_modules/
+
+# personal save files and generated test output
+*.d2s
+*.d2x
+*.key
+*.ma0
+*.ma1
+*.ma2
+*.ma3
+*.map
+*_mod.d2s
+roundtrip_out.d2s
+engine_out.d2s
+
+# local reference data (third-party sources / extracted game assets)
+ref/
+*.tbl
+*.mpq
+
+# screenshots and temp artifacts
+*.png
+*.log
+.DS_Store
+Thumbs.db
+
+# never commit credentials or local publish helpers
+.gh_token
+*_token.txt
+publish_github.py
