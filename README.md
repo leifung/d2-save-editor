@@ -29,13 +29,15 @@
 
 ### 在线使用（GitHub Pages）
 
-仓库根目录已放置 `index.html`。在 `Settings → Pages` 中把 Source 设为 `Deploy from a branch`，分支选 `main`、目录选 `/ (root)`，保存后稍等片刻即可得到：
+仓库已开启 GitHub Pages，直接访问：
 
 ```
 https://leifung.github.io/d2-save-editor/
 ```
 
-Pages 只是静态托管这个 HTML；`FileReader` 读取的存档依然只在你的浏览器里处理，不会上传。
+如果是在自己的 fork 上重新启用：`Settings → Pages` → `Deploy from a branch` → 分支 `main`、目录 `/ (root)`。
+
+Pages 只是静态托管根目录的 `index.html`；`FileReader` 读取的存档依然只在你的浏览器里处理，不会上传。
 
 ## 实现原理
 
