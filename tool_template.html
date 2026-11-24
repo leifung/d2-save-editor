@@ -179,6 +179,71 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
 .additem .x:hover{color:#5c1616}
 .add-disabled{padding:12px 13px;font-size:12px;color:var(--tx3)}
 
+/* ---------- import / shop ---------- */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.card-h{padding:11px 14px;border-bottom:1px solid var(--line);background:var(--panel2);font-size:13px;font-weight:650;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-radius:10px 10px 0 0}
+.card-h .ch-sub{font-size:11px;font-weight:400;color:var(--tx3);margin-left:auto;font-family:var(--mono)}
+.srcbody{padding:13px 14px}
+.srctabs{display:flex;gap:4px;padding:10px 12px 0;flex-wrap:wrap}
+.srctab{font:12px inherit;font-family:inherit;border:1px solid var(--line2);background:#fff;color:var(--tx2);padding:6px 11px;border-radius:6px 6px 0 0;cursor:pointer;border-bottom:0}
+.srctab:hover{color:var(--tx)}
+.srctab.on{background:var(--blue-l);border-color:#cadee7;color:var(--blue);font-weight:650}
+.srcline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.srcline label{font-size:11.5px;color:var(--tx2);white-space:nowrap}
+.srcline input[type=text],.srcline select,.srcbody select,.srcbody input[type=text],.srcbody input[type=number]{border:1px solid var(--line2);border-radius:6px;padding:6px 8px;font:12.5px inherit;font-family:inherit;background:#fff;color:var(--tx);outline:none;min-width:0}
+.srcline input:focus,.srcbody input:focus,.srcbody select:focus{border-color:var(--blue)}
+.srcline input[type=text]{flex:1;min-width:130px}
+.srcbody textarea{width:100%;min-height:78px;border:1px solid var(--line2);border-radius:6px;padding:8px;font:11.5px var(--mono);color:var(--tx);background:#fff;resize:vertical;outline:none}
+.srcbody textarea:focus{border-color:var(--blue)}
+.srcnote{font-size:11px;color:var(--tx3);line-height:1.65;margin:8px 0}
+.srclist{max-height:330px;overflow-y:auto;border:1px solid var(--line);border-radius:7px;margin-top:9px;background:#fff}
+.srcitem{display:flex;gap:8px;align-items:center;padding:7px 9px;border-bottom:1px solid #f0eee8;font-size:12px}
+.srcitem:last-child{border-bottom:0}
+.srcitem:hover{background:var(--panel2)}
+.srcitem input[type=checkbox]{flex:0 0 auto;accent-color:var(--blue);cursor:pointer}
+.srcitem .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:550}
+.srcitem .mt{font-size:10.5px;color:var(--tx3);font-family:var(--mono);white-space:nowrap}
+.qtag2{font-size:10px;padding:1px 6px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);color:var(--tx2);white-space:nowrap}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:9px}
+.fld label{display:block;font-size:11px;color:var(--tx2);margin-bottom:4px;font-weight:550}
+.fld input,.fld select{width:100%;border:1px solid var(--line2);border-radius:6px;padding:6px 8px;font:12.5px inherit;font-family:inherit;background:#fff;color:var(--tx);outline:none}
+.fld input:focus,.fld select:focus{border-color:var(--blue)}
+.fld .rg{font-size:10px;color:var(--tx3);font-family:var(--mono);margin-top:3px}
+.queue-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:11px 14px;border-bottom:1px solid var(--line)}
+.queue-tools label{font-size:11.5px;color:var(--tx2);white-space:nowrap}
+.queue-tools select{border:1px solid var(--line2);border-radius:6px;padding:6px 8px;font:12.5px inherit;font-family:inherit;background:#fff;color:var(--tx)}
+.queue-tools input[type=text]{flex:1;min-width:110px;border:1px solid var(--line2);border-radius:6px;padding:6px 8px;font:12.5px inherit;font-family:inherit;background:#fff;color:var(--tx)}
+.queue{max-height:430px;overflow-y:auto;padding:10px 14px}
+.qitem{display:flex;gap:8px;align-items:center;background:var(--blue-l);border:1px solid #d5e3f3;border-radius:6px;padding:7px 9px;margin-bottom:6px;font-size:11.5px}
+.qitem .nm{font-weight:600;color:#2b507f;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qitem .vv{font-family:var(--mono);color:var(--tx2);font-size:10.5px;white-space:nowrap}
+.qitem .x{margin-left:auto;border:0;background:transparent;color:var(--red);cursor:pointer;font-size:15px;line-height:1;padding:0 3px}
+.empty{padding:26px 12px;text-align:center;color:var(--tx3);font-size:12.5px}
+.queue-note{padding:10px 14px;border-top:1px solid var(--line);font-size:11px;color:var(--tx3);line-height:1.6;background:var(--panel2);border-radius:0 0 10px 10px}
+.shopcats{max-height:470px;overflow-y:auto;padding:10px 12px}
+.shopcat{display:flex;gap:8px;align-items:flex-start;padding:9px 10px;border:1px solid var(--line);border-radius:7px;margin-bottom:6px;cursor:pointer;background:#fff}
+.shopcat:hover{border-color:var(--blue)}
+.shopcat.on{background:var(--blue-l);border-color:#cadee7}
+.shopcat input{accent-color:var(--blue);margin-top:3px;flex:0 0 auto}
+.shopcat .tx{flex:1;min-width:0}
+.shopcat .t{font-size:12.5px;font-weight:600}
+.shopcat .d{font-size:10.5px;color:var(--tx3);margin-top:2px;line-height:1.5}
+.shopcat .n{font:10.5px var(--mono);color:var(--tx3);white-space:nowrap}
+.shopcat .del{border:0;background:transparent;color:var(--red);cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
+.shopbar{display:flex;gap:7px;flex-wrap:wrap;padding:11px 12px;border-top:1px solid var(--line)}
+.shoplist{max-height:430px;overflow-y:auto;padding:8px 12px}
+.shopgood{display:flex;gap:8px;align-items:center;padding:6px 8px;border-bottom:1px solid #f0eee8;font-size:11.5px}
+.shopgood:last-child{border-bottom:0}
+.shopgood:hover{background:var(--panel2)}
+.shopgood input{accent-color:var(--blue);flex:0 0 auto;cursor:pointer}
+.shopgood .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:550}
+.shopgood .en{font:10px var(--mono);color:var(--tx3);white-space:nowrap}
+.goodsrow{display:grid;grid-template-columns:1fr 80px 70px 70px 60px 26px;gap:6px;align-items:end;margin-bottom:6px}
+.goodsrow .fld label{font-size:10px}
+.goodsrow .fld input,.goodsrow .fld select{padding:5px 6px;font-size:11.5px}
+.goodsrow .rm{border:0;background:transparent;color:var(--red);font-size:16px;cursor:pointer;padding:0 0 6px}
+@media(max-width:980px){.two{grid-template-columns:1fr}.goodsrow{grid-template-columns:1fr 1fr 1fr}}
+
 /* ---------- bottom bar ---------- */
 .bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line2);z-index:20;box-shadow:0 -3px 14px rgba(40,35,25,.05)}
 .bar-in{max-width:1240px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -208,7 +273,7 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
     <div class="logo">D2</div>
     <div class="htx">
       <h1>暗黑破坏神 II 存档修改器</h1>
-      <p>修改人物属性与装备属性 · 新增技能与词条 · 原位位改写 · 自动重算校验和</p>
+      <p>修改人物属性与装备属性 · 新增技能与词条 · 导入任意物品 · 自定义商店商品 · 原位位改写</p>
     </div>
     <span class="badge-ver">仅支持 1.13c · .d2s</span>
   </div>
@@ -228,6 +293,8 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
   <div class="tabs">
     <div class="tab on" data-tab="attrs">人物属性 <span class="cnt" id="cnt-attr">0</span></div>
     <div class="tab" data-tab="equip">装备属性 <span class="cnt" id="cnt-item">0</span></div>
+    <div class="tab" data-tab="import">导入物品 <span class="cnt" id="cnt-imp">0</span></div>
+    <div class="tab" data-tab="shop">商店 / 商品库</div>
     <div class="tab" data-tab="help">使用说明</div>
   </div>
 
@@ -271,6 +338,99 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
     </div>
   </div>
 
+  <!-- 导入物品 -->
+  <div class="page" id="page-import">
+    <div class="hint">
+      可自行导入<b>任意物品</b>：从其他角色存档复制、读入 <code>.d2i</code>／十六进制物品码、在工具里<b>从零创建</b>任意底材与词条，
+      或复用保存到本机的「我的物品库」。导入时只在主物品列表头之后插入物品字节并更新物品计数，其余字节一位不动；
+      位置按游戏官方 <code>invwidth / invheight</code> 自动摆放，避免格子重叠。
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="card-h">① 选择物品来源 <span class="ch-sub" id="src-summary"></span></div>
+        <datalist id="baselist"></datalist>
+        <div class="srctabs" id="srctabs">
+          <button class="srctab on" data-src="d2s">其他存档 .d2s</button>
+          <button class="srctab" data-src="blob">.d2i / HEX</button>
+          <button class="srctab" data-src="create">从零创建</button>
+          <button class="srctab" data-src="library">我的物品库</button>
+        </div>
+        <div class="srcbody" id="srcbody"></div>
+      </div>
+      <div class="card">
+        <div class="card-h">② 待导入队列 <span class="ch-sub" id="queue-summary">0 件</span></div>
+        <div class="queue-tools">
+          <label>放入容器</label>
+          <select id="imp-target">
+            <option value="auto">自动（仓库 → 背包 → 方块）</option>
+            <option value="stash">仓库（10 × 10）</option>
+            <option value="inventory">背包（10 × 4）</option>
+            <option value="cube">赫拉迪克方块（3 × 4）</option>
+            <option value="belt">腰带（16 格，仅 1×1）</option>
+            <option value="keep">保持物品原位置</option>
+          </select>
+          <button class="btn btn-sm" id="imp-clear">清空队列</button>
+        </div>
+        <div class="queue" id="imp-queue"></div>
+        <div class="queue-note">队列中的物品会在点底部「保存并下载」时一次性写入。可先到其它页继续修改人物/装备，最后一起保存。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 商店 / 商品库 -->
+  <div class="page" id="page-shop">
+    <div class="warnbox">
+      <b>关于「商店」：</b>原版 1.13c 的 <code>.d2s</code> 存档<b>不包含 NPC 商店库存</b>——商人卖什么由客户端按游戏数据表在每次进游戏时生成，
+      因此存档层面无法直接改 NPC 的售卖列表。本页提供的是<b>工具内置商品库</b>：内置多种商品种类、允许自行新增种类，
+      勾选后「一键上架」即批量生成物品写入存档（仓库 / 背包），进游戏即可取用，效果等同于随时可取的商店货架。
+      内置种类中的「游戏内商人常售」按 1.13c 官方数据表各 NPC 的 <code>Min/Max</code> 列提取，可作模板使用。
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="card-h">商品种类 <span class="ch-sub" id="shop-cat-summary"></span></div>
+        <div class="shopcats" id="shop-cats"></div>
+        <div class="shopbar">
+          <button class="btn btn-sm" id="shop-new" style="border-color:var(--blue);color:var(--blue)">＋ 新增商品种类</button>
+          <button class="btn btn-sm" id="shop-export">导出配置</button>
+          <button class="btn btn-sm" id="shop-import">导入配置</button>
+          <input type="file" id="shop-file" accept=".json,application/json">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h">商品清单 <span class="ch-sub" id="shop-good-summary"></span></div>
+        <div class="queue-tools">
+          <input type="text" id="shop-q" placeholder="搜索中文名 / 代码…">
+          <select id="shop-target">
+            <option value="stash">放入仓库</option>
+            <option value="inventory">放入背包</option>
+            <option value="auto">自动</option>
+            <option value="cube">放入方块</option>
+          </select>
+          <button class="btn btn-sm" id="shop-all">全选</button>
+          <button class="btn btn-sm btn-primary" id="shop-shelf">一键上架选中</button>
+        </div>
+        <div class="shoplist" id="shop-goods"></div>
+      </div>
+    </div>
+    <div class="card" id="shop-form" style="display:none;margin-top:14px">
+      <div class="card-h">＋ 自定义商品种类 <span class="ch-sub">保存在本机浏览器，导出配置可备份 / 分享</span></div>
+      <div class="srcbody">
+        <div class="formgrid">
+          <div class="fld"><label>种类名称</label><input type="text" id="sc-name" placeholder="例如：我的符文包"></div>
+          <div class="fld"><label>说明（可选）</label><input type="text" id="sc-desc" placeholder="例如：常用制作材料"></div>
+        </div>
+        <div class="subhead" style="margin-top:16px">商品条目 <span class="n">至少 1 条</span></div>
+        <div id="sc-goods"></div>
+        <button class="btn btn-sm" id="sc-add" style="margin-top:8px">＋ 添加一条商品</button>
+        <div class="srcnote">品质选「暗金 / 套装」时会自动按所选名称填入对应底材；词条可在导入后到「装备属性」页添加，也可在「从零创建」页直接生成带词条的物品。</div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn btn-primary" id="sc-save">保存商品种类</button>
+          <button class="btn" id="sc-cancel">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 说明 -->
   <div class="page" id="page-help">
     <div class="help">
@@ -290,6 +450,21 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
         <li>新增属性只对所选装备生效。<b>简易物品</b>（金币、药水、耳朵等）没有属性列表，界面会禁用添加。保存后<b>重新载入新文件</b>即可像普通属性一样继续编辑新增的数值。</li>
         <li>部分属性有游戏侧限制（例如只对特定物品类型生效、需要对应技能或职业），写入合法但游戏内可能不显示；「高级」分类里的 by-time、灵气、怪物类型等属性使用原始编码，请谨慎使用。</li>
       </ul>
+      <h3 style="margin-top:18px">导入任意物品</h3>
+      <ul>
+        <li>「导入物品」页有四种来源：<b>其他 .d2s 存档</b>（跨角色复制装备）、<b>.d2i / 十六进制物品码</b>（文件读入或直接粘贴）、<b>从零创建</b>（659 种底材 + 品质 + 等级 + 数量 + 孔数 + 无形 + 词条）、<b>我的物品库</b>（存在本机浏览器，可导出 JSON 备份／分享）。</li>
+        <li>每种来源解析后都会列出中文名、品质、来源位置与字节数，勾选后加入「待导入队列」；队列里的物品可逐条移除，也可以切换到别的页继续改人物/装备，最后一起保存。</li>
+        <li>可选择放入<b>仓库 / 背包 / 赫拉迪克方块 / 腰带</b>、<b>自动分配</b>或<b>保持物品原位置</b>。自动摆放使用游戏官方 <code>armor.txt / weapons.txt / misc.txt</code> 的 <code>invwidth / invheight</code> 计算占用格，先标记存档中已有物品，再逐件找空位，避免重叠；容器满了会明确报错而不是写入坏档。</li>
+        <li>在「装备属性」页选中一件装备，详情头部有<b>「导出 .d2i」</b>与<b>「存入物品库」</b>；物品库也可整库导出为 JSON，下次直接导入复用。</li>
+        <li>导入只改动两处：主物品列表的 <code>uint16</code> 计数，以及在 <code>JM</code> 头之后插入的物品字节；随后重算文件长度与校验和。其余数据（属性、技能、尸体、雇佣兵、石魔）<b>逐字节不变</b>，保存前会重新解析校验。</li>
+      </ul>
+      <h3 style="margin-top:18px">商店 / 商品库</h3>
+      <ul>
+        <li>原版 1.13c 的 <code>.d2s</code> <b>不保存 NPC 商店库存</b>（商人商品由客户端每次进游戏生成），所以本页是<b>工具内置的商品库</b>：勾选商品 →「一键上架」→ 批量生成物品写入存档，进游戏即可在仓库/背包取用。</li>
+        <li>内置 8 类、共 500+ 件商品：全部 <b>33 枚符文</b>、宝石与骷髅、药水与药剂、卷轴/书/钥匙/金币、箭矢与投掷武器、珠宝/护身符/戒指/项链、常用带孔底材，以及按官方数据表提取的 <b>14 位游戏内商人常售清单</b>（阿卡拉、恰西、基德、法拉、卓格南、奥玛斯、马拉、安雅等）。</li>
+        <li>点<b>「＋ 新增商品种类」</b>可自定义种类名称、说明与任意多条商品（底材、品质、等级、数量、孔数、暗金/套装名称），保存在本机；自定义种类可删除，整份配置可导出/导入 JSON。</li>
+        <li>若要让<b>游戏内 NPC 真正售卖</b>指定商品，需改游戏数据文件（<code>misc.txt / armor.txt / weapons.txt</code> 的各 NPC <code>Min/Max</code> 列并配合 <code>-direct -txt</code> 或打包 MPQ），这不属于存档修改范围，本工具不处理。</li>
+      </ul>
       <h3 style="margin-top:18px">使用步骤</h3>
       <ul>
         <li><b>先备份</b>原存档（例如复制一份 <code>你的角色.d2s.bak</code>），再修改。</li>
@@ -299,8 +474,8 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
       </ul>
       <h3 style="margin-top:18px">适用范围与注意</h3>
       <ul>
-        <li>核心修改目标是 <code>.d2s</code> 人物存档。同目录下的 <code>.d2x / .key / .ma0~.ma3 / .map / .UDI</code> 属于共享仓库、按键与地图数据，本工具不处理。</li>
-        <li>不支持 1.14 / 重制版（D2R）、以及 <code>.d2i</code> 等独立物品文件；加载时会校验魔数与版本。</li>
+        <li>核心修改目标是 <code>.d2s</code> 人物存档。<code>.d2i</code> 独立物品文件、十六进制物品码可作为<b>导入来源</b>；同目录下的 <code>.d2x / .key / .ma0~.ma3 / .map / .UDI / .sss</code> 属于共享仓库、按键与地图数据，本工具不处理。</li>
+        <li>不支持 1.14 / 重制版（D2R）存档；加载时会校验魔数与版本。导入来源也必须为 1.13c 物品位流。</li>
         <li>「全部设为上限」会把等级也设为位宽上限（127），游戏内可能异常，建议等级用「等级设为 99」。</li>
         <li>若原始存档校验和本就不匹配（曾被其他工具改过），仍可编辑；保存时会重算为正确值。</li>
       </ul>
@@ -313,7 +488,7 @@ table.props tr.grp td{background:var(--panel2);font-size:11px;font-weight:650;co
 
 <div class="bar" id="bar" style="display:none">
   <div class="bar-in">
-    <div class="st">已修改 <b id="edit-count">0</b> 项 · 待添加 <b id="add-count">0</b> 条属性</div>
+    <div class="st">已修改 <b id="edit-count">0</b> 项 · 待添加 <b id="add-count">0</b> 条属性 · 待导入 <b id="imp-count">0</b> 件物品</div>
     <div class="sp"></div>
     <button class="btn" id="reset-all">还原全部</button>
     <button class="btn" id="reload">选择其他文件</button>
@@ -331,10 +506,19 @@ var DATA = JSON.parse(document.getElementById('d2s-data').textContent);
 var E = D2SEngine.makeEngine(DATA);
 var S = {
   bytes:null, res:null, name:'', edits:{}, tab:'attrs', sel:-1, items:[],
-  adds:[], addCat:'skill', addQ:'', addId:127, addVals:[]
+  adds:[], addCat:'skill', addQ:'', addId:127, addVals:[],
+  imports:[], srcTab:'d2s', srcItems:[], srcSel:{}, srcQ:'', srcName:'',
+  library:[], shopCustom:[], shopCat:'runes', shopSel:{}, shopQ:'', srcCache:{},
+  create:{code:'r01',q:2,l:85,n:1,s:0,ether:0,uid:0,stid:0},
+  cpProps:[], cpId:127, cpVals:[], cpQ:''
 };
 var ADD = DATA.add || { addable:[], skills_en:[], skills_cn:[], classes_cn:[], tabs_cn:[] };
+var META = DATA.meta || {size:{},uniq_base:{},set_base:{},shop:[]};
 var CATS = [['skill','技能'],['common','常用词条'],['other','其它词条'],['advanced','高级'],['all','全部']];
+var LIBKEY='d2s_itemlib_v1', SHOPKEY='d2s_shopcats_v1';
+var QUALITY_OPTS=[[1,'低品质'],[2,'普通'],[3,'超强'],[4,'魔法'],[5,'套装'],[6,'稀有'],[7,'暗金'],[8,'手工']];
+var BASES=E.baseItems();
+var BASE_BY_CODE={}; BASES.forEach(function(b){BASE_BY_CODE[b.code]=b});
 
 function $(s){return document.querySelector(s)}
 function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
@@ -575,6 +759,8 @@ function renderDetail(){
       ' <span class="qtag" style="background:var(--panel2);color:var(--tx2);border:1px solid var(--line)">'+esc(it.quality_cn||'—')+'</span> · '+esc(it.location_text)+' · '+esc(src)+
     (it.ethereal?' · <span style="color:var(--blue)">无形的</span>':'')+(it.socketed?' · 有孔':'')+'</div></div>'+
     (it.can_add_props?'<button class="btn btn-sm" data-goadd="1" style="border-color:var(--blue);color:var(--blue)">＋ 添加技能 / 词条</button>':'')+
+    '<button class="btn btn-sm" data-equipdl="'+it._i+'">导出 .d2i</button>'+
+    '<button class="btn btn-sm" data-eqlib="'+it._i+'">存入物品库</button>'+
     '<button class="btn btn-sm" data-maxall="'+it._i+'">本装备全部最大化</button></div>';
   h+='<div class="eq-body">';
   // base fields
@@ -619,6 +805,9 @@ function renderDetail(){
 function updateCount(){
   $('#edit-count').textContent=Object.keys(S.edits).length;
   var ac=$('#add-count'); if(ac) ac.textContent=S.adds.length;
+  var ic=$('#imp-count'); if(ic) ic.textContent=S.imports.length;
+  var ci=$('#cnt-imp'); if(ci) ci.textContent=S.imports.length;
+  var qs=$('#queue-summary'); if(qs) qs.textContent=S.imports.length+' 件';
   $('#save').disabled=!S.bytes;
 }
 function switchTab(t){
@@ -636,10 +825,12 @@ function loadFile(f){
       var res=E.parse(buf);
       S.bytes=buf;S.res=res;S.name=f.name;S.edits={};S.sel=-1;
       S.adds=[];S.addQ='';S.addCat='skill';S.addId=127;S.addVals=[];
+      S.imports=[];S.srcCache={};S.srcItems=[];S.srcSel={};S.srcQ='';
       S.items=collectItems();
       $('#drop').style.display='none';
       $('#app').style.display='';$('#bar').style.display='';
       renderInfo();renderAttrs();renderList();updateCount();
+      renderSrc();renderQueue();renderShopCats();renderShopGoods();
       if(!res.ok) toast('警告：解析未精确对齐文件末尾，请谨慎保存',true);
       else toast('解析成功：'+res.name+' · '+res.item_count+' 件装备');
     }catch(e){
@@ -655,7 +846,7 @@ function loadFile(f){
 function save(){
   if(!S.bytes) return;
   var list=Object.keys(S.edits).map(function(k){return S.edits[k]});
-  if(!list.length && !S.adds.length){toast('还没有任何修改');return}
+  if(!list.length && !S.adds.length && !S.imports.length){toast('还没有任何修改');return}
   var edits=list.map(function(e){
     return {anchor:e.anchor, value: e.anchor.kind==='propval'? e.vals : e.vals[0]};
   });
@@ -666,8 +857,11 @@ function save(){
   var additions=S.adds.map(function(a){
     return {item:a.item, id:a.id, values:a.values};
   });
+  var imports=S.imports.map(function(x){
+    return {bytes:x.bytes, type:x.type, size:x.size, target:x.target, name:x.name};
+  });
   try{
-    var out=E.save(S.bytes,{edits:edits,additions:additions,levelSync:levelSync});
+    var out=E.save(S.bytes,{edits:edits,additions:additions,imports:imports,levelSync:levelSync});
     // verify the output re-parses cleanly before offering the download
     var chk=E.parse(out);
     if(!chk.ok||!chk.checksum_ok) throw new Error('保存后结构校验未通过');
@@ -679,9 +873,428 @@ function save(){
     document.body.appendChild(a);a.click();document.body.removeChild(a);
     setTimeout(function(){URL.revokeObjectURL(url)},3000);
     var delta=out.length-S.bytes.length;
-    toast('已保存 '+a.download+' · '+list.length+' 项修改 + '+S.adds.length+' 条新增属性 · '+
-      (delta>0?'+':'')+delta+' 字节 · 校验通过');
+    toast('已保存 '+a.download+' · '+list.length+' 项修改 + '+S.adds.length+' 条新增属性 + '+
+      S.imports.length+' 件导入物品 · '+(delta>0?'+':'')+delta+' 字节 · 校验通过');
   }catch(e){toast('保存失败：'+e.message,true);console.error(e)}
+}
+
+/* ======================================================================
+ * ITEM IMPORT / SHOP  —  shared queue, local library, custom shop catalog
+ * ====================================================================== */
+function bytesToHex(b){var a=[];for(var i=0;i<b.length;i++)a.push(('0'+b[i].toString(16)).slice(-2));return a.join('')}
+function hexToBytes(s){
+  var h=String(s||'').replace(/[^0-9a-fA-F]/g,'');
+  if(h.length<32) throw new Error('十六进制数据太短');
+  if(h.length%2) throw new Error('十六进制字符数为奇数');
+  var o=new Uint8Array(h.length/2);
+  for(var i=0;i<o.length;i++)o[i]=parseInt(h.substr(i*2,2),16);
+  return o;
+}
+function dl(name,data,mime){
+  var blob=new Blob([data],{type:mime||'application/octet-stream'});
+  var u=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=u;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(u)},3000);
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function safeName(s){return String(s||'item').replace(/[\\/:*?"<>|]/g,'_').slice(0,60)}
+function cnName(c){return (DATA.cn&&DATA.cn.item&&DATA.cn.item[c])||(BASE_BY_CODE[c]&&BASE_BY_CODE[c].en)||c}
+function enName(c){return (BASE_BY_CODE[c]&&BASE_BY_CODE[c].en)||c}
+function libLoad(){try{var a=JSON.parse(localStorage.getItem(LIBKEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
+function libSave(){try{localStorage.setItem(LIBKEY,JSON.stringify(S.library))}catch(e){toast('本机物品库保存失败：'+e.message,true)}}
+function shopLoad(){try{var a=JSON.parse(localStorage.getItem(SHOPKEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
+function shopSave(){try{localStorage.setItem(SHOPKEY,JSON.stringify(S.shopCustom))}catch(e){toast('商店配置保存失败：'+e.message,true)}}
+S.library=libLoad();S.shopCustom=shopLoad();
+(function(){
+  var h='';
+  BASES.forEach(function(b){h+='<option value="'+esc(b.code)+'">'+esc((b.cn||b.en)+' · '+b.code)+'</option>'});
+  var el=document.getElementById('baselist'); if(el) el.innerHTML=h;
+})();
+
+/* ---- import queue ---- */
+function setImpTarget(v){
+  var sel=document.getElementById('imp-target'); if(sel) sel.value=v;
+  var sel2=document.getElementById('shop-target'); if(sel2) sel2.value=v;
+  S.imports.forEach(function(x){x.target=v});
+  renderQueue();
+}
+function addToQueue(items,from,target){
+  if(!items.length){toast('请先勾选物品',true);return 0}
+  var t=target||($('#imp-target')?$('#imp-target').value:'auto');
+  items.forEach(function(it){
+    S.imports.push({id:uid(),name:it.name,en:it.en||'',type:it.type||'',
+      bytes:new Uint8Array(it.bytes),size:it.size||E.itemSize(it.type),target:t,from:from||''});
+  });
+  updateCount();renderQueue();
+  return items.length;
+}
+function renderQueue(){
+  var el=$('#imp-queue'); if(!el)return;
+  var h='';
+  S.imports.forEach(function(x,i){
+    h+='<div class="qitem"><span class="nm" title="'+esc(x.en)+'">'+esc(x.name)+'</span>'+
+      '<span class="vv">'+esc(({auto:'自动',stash:'仓库',inventory:'背包',cube:'方块',belt:'腰带',keep:'原位'})[x.target]||x.target)+
+      ' · '+x.size[0]+'×'+x.size[1]+' · '+x.bytes.length+'B</span>'+
+      '<button class="x" data-qdel="'+i+'" title="移除">×</button></div>';
+  });
+  el.innerHTML=h||'<div class="empty">队列为空。从左侧选择来源并加入物品，或到「商店 / 商品库」一键上架。</div>';
+  var s=$('#queue-summary'); if(s)s.textContent=S.imports.length+' 件';
+}
+
+/* ---- source panels ---- */
+function srcItemHtml(it,i){
+  var extra='';
+  if(S.srcTab==='library'&&it.libIdx!=null){
+    extra='<button class="btn btn-sm" data-libdl="'+it.libIdx+'" title="下载 .d2i" style="padding:2px 6px;font-size:10px">↓</button>'+
+      '<button class="btn btn-sm" data-libdel="'+it.libIdx+'" title="从物品库删除" style="padding:2px 6px;font-size:10px;color:var(--red)">×</button>';
+  }
+  return '<div class="srcitem"><input type="checkbox" data-si="'+i+'"'+(S.srcSel[i]?' checked':'')+'>'+
+    '<span class="nm" title="'+esc(it.en)+'">'+esc(it.name)+'</span>'+
+    '<span class="qtag2">'+esc(it.quality_cn||'普通')+'</span>'+
+    '<span class="mt">'+esc(it.type)+' · '+it.bytes.length+'B</span>'+extra+'</div>';
+}
+function libraryItems(){
+  return S.library.map(function(x,i){
+    try{
+      return {name:x.name,en:x.en,type:x.type,bytes:hexToBytes(x.hex),size:x.size||E.itemSize(x.type),
+        quality_cn:(QUALITY_OPTS.filter(function(o){return o[0]===(x.quality||2)})[0]||['','普通'])[1],libIdx:i};
+    }catch(e){return null}
+  }).filter(Boolean);
+}
+function switchSrc(tab){
+  S.srcCache[S.srcTab]=S.srcItems;
+  S.srcTab=tab;S.srcQ='';S.srcSel={};
+  S.srcItems=(tab==='library')?libraryItems():(S.srcCache[tab]||[]);
+  $$('.srctab').forEach(function(b){b.classList.toggle('on',b.dataset.src===tab)});
+  renderSrc();
+}
+function renderSrcList(){
+  var el=$('#src-list'); if(!el)return;
+  var q=S.srcQ.trim().toLowerCase(),h='',n=0;
+  S.srcItems.forEach(function(it,i){
+    if(q && (it.name+' '+(it.en||'')+' '+it.type).toLowerCase().indexOf(q)<0)return;
+    n++;h+=srcItemHtml(it,i);
+  });
+  el.innerHTML=h||'<div class="empty">'+(S.srcItems.length?'没有匹配的物品':'尚未解析出物品')+'</div>';
+  var s=$('#src-summary'); if(s)s.textContent=S.srcItems.length?('已解析 '+S.srcItems.length+' 件'):'';
+}
+function cpOptions(){
+  var q=S.cpQ.trim().toLowerCase();
+  return E.addableProps().filter(function(p){return !q||(p.cn+' '+p.s+' '+p.id).toLowerCase().indexOf(q)>=0})
+    .map(function(p){return '<option value="'+p.id+'"'+(p.id===S.cpId?' selected':'')+'>#'+p.id+' '+esc(p.cn)+'</option>'}).join('');
+}
+function ensureCpId(){
+  var opts=E.addableProps().filter(function(p){return !S.cpQ.trim()||(p.cn+' '+p.s+' '+p.id).toLowerCase().indexOf(S.cpQ.trim().toLowerCase())>=0});
+  if(!opts.length){S.cpId=0;S.cpVals=[];return null}
+  if(!opts.some(function(p){return p.id===S.cpId}))S.cpId=opts[0].id;
+  var d=E.describeAddProp(S.cpId);
+  if(!d){S.cpVals=[];return null}
+  if(S.cpVals.length!==d.fields.length)S.cpVals=d.defaults.slice();
+  return d;
+}
+function miniFieldHtml(f,i,d){
+  var h='<div class="addf"><label>'+esc(f.label)+'</label>';
+  if(f.kind==='skill')h+='<select class="cpv" data-k="'+i+'">'+SKILL_OPTS.replace(/<option value="(\d+)">/g,function(m,v){return '<option value="'+v+'"'+(Number(v)===S.cpVals[i]?' selected':'')+'>'}).replace(/<\/option>/g,'</option>')+'</select>';
+  else if(f.kind==='class')h+='<select class="cpv" data-k="'+i+'">'+classOptions(f.max).replace(/<option value="(\d+)">/g,function(m,v){return '<option value="'+v+'"'+(Number(v)===S.cpVals[i]?' selected':'')+'>'}).replace(/<\/option>/g,'</option>')+'</select>';
+  else if(f.kind==='tab'){
+    h+='<select class="cpv" data-k="'+i+'">'+tabOptions(0,f.max).replace(/<option value="(\d+)">/g,function(m,v){return '<option value="'+v+'"'+(Number(v)===S.cpVals[i]?' selected':'')+'>'}).replace(/<\/option>/g,'</option>')+'</select>';
+  }else h+='<input class="cpv" data-k="'+i+'" type="number" min="'+f.min+'" max="'+f.max+'" value="'+esc(S.cpVals[i])+'">';
+  return h+'<div class="rg">'+f.min+' ~ '+fmt(f.max)+'</div></div>';
+}
+function cpSummary(a){
+  var d=E.describeAddProp(a.id); if(!d)return '';
+  return d.fields.map(function(f,i){
+    var v=a.values[i];
+    if(f.kind==='skill')return ADD.skills_cn[v]||ADD.skills_en[v]||('#'+v);
+    if(f.kind==='class')return (ADD.classes_cn||[])[v]||('#'+v);
+    return String(v);
+  }).join(' / ');
+}
+function uniqueOptions(sel){
+  return DATA.unq_items.map(function(n,i){return i<400?'<option value="'+i+'"'+(i===sel?' selected':'')+'>'+esc((DATA.cn&&DATA.cn.unq&&DATA.cn.unq[n])||n)+' · #'+i+'</option>':''}).join('');
+}
+function setOptions(sel){
+  return DATA.set_items.map(function(n,i){return i<120?'<option value="'+i+'"'+(i===sel?' selected':'')+'>'+esc((DATA.cn&&DATA.cn.set&&DATA.cn.set[n])||n)+' · #'+i+'</option>':''}).join('');
+}
+function createFormHtml(){
+  var c=S.create,d=ensureCpId();
+  var h='<div class="srcline"><label>底材 / 代码</label><input type="text" list="baselist" id="c-code" data-c="code" value="'+esc(c.code)+'" placeholder="输入 3 位代码或从下拉选中文名" style="flex:1"><span class="qtag2" id="c-curname">'+esc(cnName(c.code))+'</span></div>';
+  h+='<div class="formgrid">';
+  h+='<div class="fld"><label>品质</label><select id="c-q" data-c="q">'+QUALITY_OPTS.map(function(o){return '<option value="'+o[0]+'"'+(Number(c.q)===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>';
+  h+='<div class="fld"><label>物品等级</label><input type="number" id="c-l" data-c="l" min="1" max="99" value="'+c.l+'"><div class="rg">1 ~ 99</div></div>';
+  h+='<div class="fld"><label>数量（可堆叠物品）</label><input type="number" id="c-n" data-c="n" min="1" max="511" value="'+c.n+'"><div class="rg">1 ~ 511</div></div>';
+  h+='<div class="fld"><label>孔数</label><input type="number" id="c-s" data-c="s" min="0" max="15" value="'+c.s+'"><div class="rg">0 ~ 15</div></div>';
+  h+='<div class="fld"><label>无形</label><select id="c-ether" data-c="ether"><option value="0"'+(c.ether==0?' selected':'')+'>否</option><option value="1"'+(c.ether==1?' selected':'')+'>是</option></select></div>';
+  if(Number(c.q)===7)h+='<div class="fld" style="grid-column:span 2"><label>暗金名称（自动匹配底材）</label><select id="c-uid" data-c="uid">'+uniqueOptions(Number(c.uid))+'</select></div>';
+  if(Number(c.q)===5)h+='<div class="fld" style="grid-column:span 2"><label>套装名称（自动匹配底材）</label><select id="c-stid" data-c="stid">'+setOptions(Number(c.stid))+'</select></div>';
+  h+='</div>';
+  h+='<div class="subhead" style="margin-top:16px">附加词条 <span class="n">'+S.cpProps.length+' 条</span></div>';
+  h+='<div class="srcline"><input type="text" id="cp-q" placeholder="搜索词条中文名 / ID" value="'+esc(S.cpQ)+'" style="flex:1"><select id="cp-id" style="flex:1.4">'+cpOptions()+'</select></div>';
+  if(d)h+='<div class="addfields">'+d.fields.map(function(f,i){return miniFieldHtml(f,i,d)}).join('')+'</div><button class="btn btn-sm" id="cp-add">＋ 添加词条</button>';
+  else h+='<div class="srcnote">没有匹配的词条。</div>';
+  if(S.cpProps.length){
+    h+='<div class="addlist"><h4>已选词条</h4>';
+    S.cpProps.forEach(function(a,i){h+='<div class="additem"><span class="nm">'+esc((E.describeAddProp(a.id)||{}).cn||a.id)+'</span><span class="vv">'+esc(cpSummary(a))+'</span><button class="x" data-cpdel="'+i+'">×</button></div>'});
+    h+='<button class="btn btn-sm" id="cp-clear" style="margin-top:4px">清空词条</button></div>';
+  }
+  h+='<div style="margin-top:12px"><button class="btn btn-primary" id="c-gen">生成物品并加入队列</button></div>';
+  h+='<div class="srcnote">生成的物品是合法的 1.13c 物品位流（含属性列表终止符），导入后可在「装备属性」页继续改数值或添加技能 / 词条。</div>';
+  return h;
+}
+function renderSrc(){
+  var el=$('#srcbody'); if(!el)return;
+  var h='';
+  if(S.srcTab==='d2s'){
+    h+='<div class="srcline"><button class="btn btn-sm" data-srcpick="d2s">选择另一个 .d2s 存档</button><input type="file" id="src-d2s-file" accept=".d2s"></div>';
+    h+='<div class="srcline"><input type="text" id="src-q" placeholder="搜索物品名 / 代码" value="'+esc(S.srcQ)+'"><button class="btn btn-sm" id="src-all">全选</button><button class="btn btn-sm" id="src-none">清空选择</button></div>';
+    h+='<div class="srclist" id="src-list"></div>';
+    h+='<div style="margin-top:9px"><button class="btn btn-primary btn-sm" id="src-join">加入待导入队列</button></div>';
+    h+='<div class="srcnote">列出该存档的全部顶层物品（人物 / 尸体 / 雇佣兵 / 石魔），镶嵌物随母物品一起复制。跨角色复制无需原存档在本机以外做任何处理。</div>';
+  }else if(S.srcTab==='blob'){
+    h+='<div class="srcline"><button class="btn btn-sm" data-srcpick="blob">选择 .d2i / .bin / .hex 文件</button><input type="file" id="src-blob-file" accept=".d2i,.bin,.hex,.txt"></div>';
+    h+='<div class="srcnote">也可以直接粘贴十六进制物品码（支持空格、换行、0x 前缀）：</div>';
+    h+='<textarea id="src-hex" placeholder="4A 4D 20 00 ... 或 4A4D2000..."></textarea>';
+    h+='<div class="srcline" style="margin-top:8px"><button class="btn btn-sm" id="src-hexgo">解析十六进制</button><button class="btn btn-sm" id="src-libadd">解析并存入物品库</button></div>';
+    h+='<div class="srclist" id="src-list"></div>';
+    h+='<div style="margin-top:9px"><button class="btn btn-primary btn-sm" id="src-join">加入待导入队列</button></div>';
+    h+='<div class="srcnote">兼容单个物品块、<code>JM</code>+版本头的 .d2i、以及 <code>JM</code>+数量+N 件的物品列表。</div>';
+  }else if(S.srcTab==='create'){
+    h=createFormHtml();
+  }else{
+    h+='<div class="srcline"><button class="btn btn-sm" id="lib-export">导出物品库 JSON</button><button class="btn btn-sm" data-srcpick="lib">导入物品库 JSON</button><button class="btn btn-sm" id="lib-clear">清空物品库</button><input type="file" id="src-lib-file" accept=".json"></div>';
+    h+='<div class="srcline"><input type="text" id="src-q" placeholder="搜索物品名 / 代码" value="'+esc(S.srcQ)+'"><button class="btn btn-sm" id="src-all">全选</button><button class="btn btn-sm" id="src-none">清空选择</button></div>';
+    h+='<div class="srclist" id="src-list"></div>';
+    h+='<div style="margin-top:9px"><button class="btn btn-primary btn-sm" id="src-join">加入待导入队列</button></div>';
+    h+='<div class="srcnote">物品库保存在本机浏览器（localStorage），不会上传。在「装备属性」页点「存入物品库」即可收藏当前存档的装备；每条可单独下载 .d2i 或删除。</div>';
+  }
+  el.innerHTML=h;
+  if(S.srcTab==='d2s'||S.srcTab==='library'||S.srcTab==='blob')renderSrcList();
+}
+function srcSelected(){
+  return S.srcItems.filter(function(it,i){return S.srcSel[i]});
+}
+function parseBlobIntoSource(bytes){
+  var d=E.parseItemBlob(bytes);
+  S.srcItems=d.items.map(function(x){return {name:x.name,en:x.en,type:x.type,quality_cn:x.quality_cn,
+    bytes:x.bytes,size:x.size}});
+  S.srcSel={};S.srcQ='';
+  S.srcName=d.name||d.kind;
+  S.srcCache[S.srcTab]=S.srcItems;
+  renderSrc();
+  toast('解析成功：'+d.items.length+' 件物品（'+d.kind+'）');
+}
+function generateCreateItem(){
+  var c=S.create,code=String(c.code||'').trim().toLowerCase();
+  if(!BASE_BY_CODE[code]){toast('底材代码无效：'+code+'（请从下拉选择）',true);return}
+  var spec={type:code,quality:Number(c.q),level:Number(c.l),quantity:Number(c.n),
+    sockets:Number(c.s),ethereal:Number(c.ether)?1:0,props:S.cpProps.slice()};
+  if(Number(c.q)===7){
+    spec.uniqueId=Number(c.uid);
+    var ub=META.uniq_base[String(c.uid)];
+    if(ub){spec.type=ub;code=ub}else toast('该暗金没有可用底材映射，已保留当前底材',true);
+  }
+  if(Number(c.q)===5){
+    spec.setId=Number(c.stid);
+    var sb=META.set_base[String(c.stid)];
+    if(sb){spec.type=sb;code=sb}else toast('该套装没有可用底材映射，已保留当前底材',true);
+  }
+  try{
+    var b=E.buildItem(spec);
+    var d=E.parseItemBlob(b).items[0];
+    addToQueue([{name:d.name,en:d.en,type:code,bytes:b,size:E.itemSize(code)}],'从零创建');
+    toast('已生成「'+d.name+'」并加入队列（'+b.length+' 字节）');
+  }catch(err){toast('生成失败：'+err.message,true)}
+}
+
+/* ---- shop / catalog ---- */
+function allShopCats(){return (META.shop||[]).concat(S.shopCustom)}
+function currentGoods(){
+  var cat=allShopCats().filter(function(c){return c.id===S.shopCat})[0];
+  if(!cat)return [];
+  var out=[];
+  (cat.goods||[]).forEach(function(g,i){out.push({key:cat.id+'|'+i+'|'+g.c,g:g,grp:''})});
+  (cat.groups||[]).forEach(function(gr,gi){gr.codes.forEach(function(c,i){out.push({key:cat.id+'|g'+gi+'|'+i+'|'+c,g:{c:c},grp:gr.cn})})});
+  return out;
+}
+function renderShopCats(){
+  var el=$('#shop-cats');if(!el)return;
+  var cs=allShopCats(),h='';
+  cs.forEach(function(c){
+    var n=(c.goods||[]).length+(c.groups||[]).reduce(function(a,g){return a+g.codes.length},0);
+    h+='<label class="shopcat'+(S.shopCat===c.id?' on':'')+'" data-shopcat="'+esc(c.id)+'">'+
+      '<input type="checkbox" data-catsel="'+esc(c.id)+'"'+(S.shopCat===c.id?' checked':'')+'>'+
+      '<span class="tx"><span class="t">'+esc(c.cn)+'</span><span class="d">'+esc(c.desc||'')+'</span></span>'+
+      '<span class="n">'+n+' 件</span>'+
+      (c.custom?'<button class="del" data-catdel="'+esc(c.id)+'" title="删除自定义种类">×</button>':'')+'</label>';
+  });
+  el.innerHTML=h||'<div class="empty">暂无商品种类</div>';
+  var s=$('#shop-cat-summary');if(s)s.textContent='内置 '+(META.shop||[]).length+' 类 / 自定义 '+S.shopCustom.length+' 类';
+}
+function renderShopGoods(){
+  var el=$('#shop-goods');if(!el)return;
+  var q=S.shopQ.trim().toLowerCase(),list=currentGoods(),h='',n=0;
+  list.forEach(function(x){
+    var g=x.g,cn=cnName(g.c),en=enName(g.c);
+    if(q&&(cn+' '+en+' '+g.c+' '+x.grp).toLowerCase().indexOf(q)<0)return;
+    n++;
+    var meta=[];
+    if(g.q){var qo=QUALITY_OPTS.filter(function(o){return o[0]===g.q})[0];if(qo)meta.push(qo[1])}
+    if(g.n)meta.push('×'+g.n);
+    if(g.s)meta.push(g.s+' 孔');
+    if(x.grp)meta.push(x.grp);
+    h+='<label class="shopgood"><input type="checkbox" data-shopsel="'+esc(x.key)+'"'+(S.shopSel[x.key]?' checked':'')+'>'+
+      '<span class="nm" title="'+esc(en)+'">'+esc(cn)+'</span><span class="en">'+esc(g.c)+'</span>'+
+      '<span class="en">'+esc(meta.join(' · '))+'</span></label>';
+  });
+  el.innerHTML=h||'<div class="empty">没有匹配的商品</div>';
+  var s=$('#shop-good-summary');if(s)s.textContent='当前种类 '+list.length+' 件 / 显示 '+n+' 件';
+}
+function selectedGoods(){
+  var map={};currentGoods().forEach(function(x){map[x.key]=x});
+  return Object.keys(S.shopSel).filter(function(k){return S.shopSel[k]&&map[k]}).map(function(k){return map[k]});
+}
+function shopShelf(){
+  var list=selectedGoods();
+  if(!list.length){toast('请先勾选商品',true);return}
+  var target=$('#imp-target')?$('#imp-target').value:'stash',made=0,failed=[];
+  list.forEach(function(x){
+    var g=x.g,code=g.c;
+    var spec={type:code,quality:g.q||2,level:g.l||85,quantity:g.n||1,sockets:g.s||0};
+    if(g.u!=null){spec.quality=7;spec.uniqueId=g.u;if(META.uniq_base[String(g.u)])spec.type=META.uniq_base[String(g.u)]}
+    if(g.st!=null){spec.quality=5;spec.setId=g.st;if(META.set_base[String(g.st)])spec.type=META.set_base[String(g.st)]}
+    code=spec.type;
+    try{
+      var b=E.buildItem(spec),d=E.parseItemBlob(b).items[0];
+      S.imports.push({id:uid(),name:d.name,en:d.en,type:code,bytes:b,size:E.itemSize(code),target:target,from:'商店'});
+      made++;
+    }catch(err){failed.push(g.c+': '+err.message)}
+  });
+  S.shopSel={};updateCount();renderQueue();renderShopGoods();
+  if(failed.length)toast('已上架 '+made+' 件，'+failed.length+' 件失败：'+failed[0],true);
+  else toast('已上架 '+made+' 件商品到待导入队列');
+}
+function scGoodsHtml(){
+  var f=S.scForm;
+  return f.goods.map(function(g,i){
+    return '<div class="goodsrow">'+
+      '<div class="fld"><label>底材代码</label><input type="text" list="baselist" data-g="'+i+'" data-gf="c" value="'+esc(g.c)+'" placeholder="代码"></div>'+
+      '<div class="fld"><label>品质</label><select data-g="'+i+'" data-gf="q">'+QUALITY_OPTS.map(function(o){return '<option value="'+o[0]+'"'+(Number(g.q)===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>'+
+      '<div class="fld"><label>等级</label><input type="number" data-g="'+i+'" data-gf="l" min="1" max="99" value="'+g.l+'"></div>'+
+      '<div class="fld"><label>数量</label><input type="number" data-g="'+i+'" data-gf="n" min="1" max="511" value="'+g.n+'"></div>'+
+      '<div class="fld"><label>孔数</label><input type="number" data-g="'+i+'" data-gf="s" min="0" max="15" value="'+g.s+'"></div>'+
+      '<button class="rm" data-gdel="'+i+'" title="移除">×</button></div>';
+  }).join('');
+}
+function renderShopForm(){
+  var box=$('#shop-form');if(!box)return;
+  box.style.display='';
+  $('#sc-name').value=S.scForm.name;$('#sc-desc').value=S.scForm.desc;
+  $('#sc-goods').innerHTML=scGoodsHtml();
+}
+function saveShopCat(){
+  var f=S.scForm;
+  f.name=f.name.trim();
+  if(!f.name){toast('请填写商品种类名称',true);return}
+  var goods=f.goods.filter(function(g){return g.c&&BASE_BY_CODE[g.c.trim().toLowerCase()]})
+    .map(function(g){return {c:g.c.trim().toLowerCase(),q:Number(g.q)||2,l:Number(g.l)||85,n:Number(g.n)||1,s:Number(g.s)||0}});
+  if(!goods.length){toast('至少要有 1 条有效底材商品',true);return}
+  S.shopCustom.push({id:'custom_'+uid(),cn:f.name,desc:f.desc||'自定义商品种类',goods:goods,custom:true});
+  shopSave();S.shopCat=S.shopCustom[S.shopCustom.length-1].id;
+  $('#shop-form').style.display='none';
+  renderShopCats();renderShopGoods();
+  toast('已新增商品种类「'+f.name+'」（'+goods.length+' 件商品）');
+}
+
+/* ---- export from equipment detail ---- */
+function itemRawBytes(it){return S.bytes.slice(it.start_byte,it.end_byte)}
+function exportEquipItem(it){
+  if(!it||!S.bytes)return;
+  var b=itemRawBytes(it);
+  dl(safeName(it.display_name)+'.d2i',b,'application/octet-stream');
+  toast('已导出 '+safeName(it.display_name)+'.d2i（'+b.length+' 字节）');
+}
+function libraryAdd(it){
+  if(!it||!S.bytes)return;
+  var b=itemRawBytes(it),hex=bytesToHex(b);
+  if(S.library.some(function(x){return x.hex===hex})){toast('该物品已在物品库中');return}
+  S.library.unshift({id:uid(),name:it.display_name,en:it.display_name_en||'',type:it.type,
+    hex:hex,quality:it.quality||0,size:E.itemSize(it.type),ts:Date.now()});
+  libSave();renderSrc();
+  toast('已存入物品库：'+it.display_name);
+}
+
+function setCreateField(el){
+  var f=el.dataset.c;if(!f)return;
+  var v=(f==='code')?el.value:Number(el.value);
+  if(f!=='code'&&!isFinite(v))return;
+  S.create[f]=v;
+  if(f==='code'){var n=$('#c-curname');if(n)n.textContent=cnName(String(v).trim().toLowerCase())}
+}
+function setGoodField(el){
+  var i=+el.dataset.g,f=el.dataset.gf;
+  if(!S.scForm||!S.scForm.goods[i])return;
+  S.scForm.goods[i][f]=(f==='c')?el.value:Number(el.value);
+}
+function readSourceFile(file,kind){
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      if(kind==='lib'){
+        var obj=JSON.parse(new TextDecoder().decode(rd.result));
+        var arr=Array.isArray(obj)?obj:(obj.items||[]),n=0;
+        arr.forEach(function(x){
+          if(!x||typeof x.hex!=='string')return;
+          try{hexToBytes(x.hex)}catch(e){return}
+          if(S.library.some(function(y){return y.hex===x.hex}))return;
+          S.library.push({id:uid(),name:x.name||'物品',en:x.en||'',type:x.type||'',hex:x.hex,
+            quality:x.quality||0,size:x.size||[1,1],ts:Date.now()});n++;
+        });
+        libSave();S.srcItems=libraryItems();S.srcCache.library=S.srcItems;renderSrc();
+        toast('已合并 '+n+' 件物品到物品库');return;
+      }
+      if(kind==='shop'){
+        var o=JSON.parse(new TextDecoder().decode(rd.result));
+        var cats=Array.isArray(o)?o:(o.cats||[]),m=0;
+        cats.forEach(function(c){
+          if(!c||!c.cn||!Array.isArray(c.goods))return;
+          S.shopCustom.push({id:'custom_'+uid(),cn:c.cn,desc:c.desc||'',goods:c.goods,custom:true});m++;
+        });
+        shopSave();renderShopCats();toast('已导入 '+m+' 个自定义商品种类');return;
+      }
+      var buf=new Uint8Array(rd.result);
+      // .hex / .txt files usually contain ASCII hex rather than raw bytes
+      var textish=/\.(hex|txt)$/i.test(file.name);
+      if(!textish&&buf.length>=32&&buf[0]!==0x4a){
+        textish=true;
+        for(var ti=0;ti<Math.min(buf.length,512);ti++){
+          var c=buf[ti];
+          if(!((c>=48&&c<=57)||(c>=65&&c<=70)||(c>=97&&c<=102)||c===32||c===10||c===13||c===9)){
+            textish=false;break;
+          }
+        }
+      }
+      if(textish)buf=hexToBytes(new TextDecoder().decode(buf));
+      parseBlobIntoSource(buf);
+    }catch(err){toast('解析失败：'+err.message,true);console.error(err)}
+  };
+  rd.onerror=function(){toast('文件读取失败',true)};
+  rd.readAsArrayBuffer(file);
+}
+function parseHexToSource(addLib){
+  try{
+    var t=$('#src-hex').value;
+    var bytes=hexToBytes(t),d=E.parseItemBlob(bytes);
+    if(addLib){
+      var n=0;
+      d.items.forEach(function(x){
+        var hx=bytesToHex(x.bytes);
+        if(S.library.some(function(y){return y.hex===hx}))return;
+        S.library.push({id:uid(),name:x.name,en:x.en,type:x.type,hex:hx,quality:x.quality||0,size:x.size,ts:Date.now()});n++;
+      });
+      libSave();S.srcItems=libraryItems();S.srcCache.library=S.srcItems;renderSrc();
+      toast('已解析并存入 '+n+' 件物品');
+    }else parseBlobIntoSource(bytes);
+  }catch(err){toast('解析失败：'+err.message,true)}
 }
 
 /* ---- events ---- */
@@ -705,6 +1318,25 @@ $('#eq-scroll').addEventListener('click',function(e){
 /* delegated input / button handling for all editable fields */
 document.addEventListener('input',function(e){
   var el=e.target;
+  /* ---- import / shop panels ---- */
+  if(el.id==='src-q'){S.srcQ=el.value;renderSrcList();return}
+  if(el.id==='shop-q'){S.shopQ=el.value;renderShopGoods();return}
+  if(el.id==='cp-q'){
+    S.cpQ=el.value;ensureCpId();renderSrc();
+    var cq=document.getElementById('cp-q');
+    if(cq){cq.focus();try{cq.setSelectionRange(cq.value.length,cq.value.length)}catch(x){}}
+    return;
+  }
+  if(el.id==='src-hex')return;
+  if(el.id==='sc-name'){if(S.scForm)S.scForm.name=el.value;return}
+  if(el.id==='sc-desc'){if(S.scForm)S.scForm.desc=el.value;return}
+  if(el.dataset.c!=null&&el.tagName!=='SELECT'){setCreateField(el);return}
+  if(el.dataset.gf!=null&&el.tagName!=='SELECT'){setGoodField(el);return}
+  if(el.classList.contains('cpv')){
+    var ck=+el.dataset.k,cv=(el.getAttribute('type')==='number')?parseFloat(el.value):parseInt(el.value,10);
+    if(!isNaN(cv))S.cpVals[ck]=cv;
+    return;
+  }
   /* add-property panel: keep state without a full detail re-render */
   if(el.id==='add-q'){
     S.addQ=el.value;
@@ -734,6 +1366,29 @@ document.addEventListener('input',function(e){
 });
 document.addEventListener('change',function(e){
   var el=e.target;
+  /* ---- import / shop panels ---- */
+  if(el.id==='imp-target'||el.id==='shop-target'){setImpTarget(el.value);return}
+  if(el.dataset.c!=null&&el.tagName==='SELECT'){
+    setCreateField(el);
+    if(el.dataset.c==='q')renderSrc();
+    return;
+  }
+  if(el.dataset.gf!=null&&el.tagName==='SELECT'){setGoodField(el);return}
+  if(el.id==='cp-id'){
+    S.cpId=+el.value;var nd0=E.describeAddProp(S.cpId);
+    S.cpVals=nd0?nd0.defaults.slice():[];renderSrc();return;
+  }
+  if(el.classList.contains('cpv')){
+    var ak2=+el.dataset.k,av2=parseInt(el.value,10);
+    if(!isNaN(av2))S.cpVals[ak2]=av2;
+    return;
+  }
+  if(el.dataset.si!=null){S.srcSel[+el.dataset.si]=!!el.checked;return}
+  if(el.dataset.shopsel!=null){S.shopSel[el.dataset.shopsel]=!!el.checked;return}
+  if(el.id==='src-d2s-file'&&el.files[0]){readSourceFile(el.files[0],'d2s');el.value='';return}
+  if(el.id==='src-blob-file'&&el.files[0]){readSourceFile(el.files[0],'blob');el.value='';return}
+  if(el.id==='src-lib-file'&&el.files[0]){readSourceFile(el.files[0],'lib');el.value='';return}
+  if(el.id==='shop-file'&&el.files[0]){readSourceFile(el.files[0],'shop');el.value='';return}
   /* add-property panel */
   if(el.id==='add-prop'){
     S.addId=+el.value;
@@ -763,6 +1418,89 @@ document.addEventListener('change',function(e){
   }
 });
 document.addEventListener('click',function(e){
+  /* ---- import / shop panels ---- */
+  var stb=e.target.closest('[data-src]');
+  if(stb){switchSrc(stb.dataset.src);return}
+  var sp=e.target.closest('[data-srcpick]');
+  if(sp){
+    var fid={d2s:'src-d2s-file',blob:'src-blob-file',lib:'src-lib-file'}[sp.dataset.srcpick];
+    var fi=document.getElementById(fid); if(fi)fi.click();
+    return;
+  }
+  if(e.target.closest('#src-join')){
+    var label={d2s:'其他存档',blob:'物品文件',library:'物品库'}[S.srcTab]||'来源';
+    var cnt=addToQueue(srcSelected(),label);
+    if(cnt)toast('已加入 '+cnt+' 件物品到待导入队列');
+    return;
+  }
+  if(e.target.closest('#src-all')){S.srcItems.forEach(function(_,i){S.srcSel[i]=1});renderSrcList();return}
+  if(e.target.closest('#src-none')){S.srcSel={};renderSrcList();return}
+  if(e.target.closest('#src-hexgo')){parseHexToSource(false);return}
+  if(e.target.closest('#src-libadd')){parseHexToSource(true);return}
+  var ld=e.target.closest('[data-libdl]');
+  if(ld){
+    var li=S.library[+ld.dataset.libdl];
+    if(li){dl(safeName(li.name)+'.d2i',hexToBytes(li.hex),'application/octet-stream');toast('已下载 '+li.name+'.d2i')}
+    return;
+  }
+  var lx=e.target.closest('[data-libdel]');
+  if(lx){S.library.splice(+lx.dataset.libdel,1);libSave();S.srcItems=libraryItems();S.srcCache.library=S.srcItems;renderSrc();toast('已从物品库移除');return}
+  if(e.target.closest('#lib-export')){
+    dl('暗黑2物品库.json',JSON.stringify(S.library,null,2),'application/json');
+    toast('已导出物品库（'+S.library.length+' 件）');return;
+  }
+  if(e.target.closest('#lib-clear')){
+    S.library=[];libSave();S.srcItems=[];S.srcCache.library=[];renderSrc();toast('物品库已清空');return;
+  }
+  var qd=e.target.closest('[data-qdel]');
+  if(qd){S.imports.splice(+qd.dataset.qdel,1);updateCount();renderQueue();return}
+  if(e.target.closest('#imp-clear')){S.imports=[];updateCount();renderQueue();toast('待导入队列已清空');return}
+  var ed=e.target.closest('[data-equipdl]');
+  if(ed){exportEquipItem(S.items[+ed.dataset.equipdl]);return}
+  var el2=e.target.closest('[data-eqlib]');
+  if(el2){libraryAdd(S.items[+el2.dataset.eqlib]);return}
+  if(e.target.closest('#c-gen')){generateCreateItem();return}
+  if(e.target.closest('#cp-add')){
+    var dd=E.describeAddProp(S.cpId);
+    if(!dd){toast('请先选择词条',true);return}
+    var vv=E.normalizeAddValues(S.cpId,S.cpVals);
+    S.cpProps.push({id:S.cpId,values:vv});S.cpVals=vv.slice();renderSrc();
+    toast('已添加词条：'+dd.cn+'（共 '+S.cpProps.length+' 条）');return;
+  }
+  if(e.target.closest('#cp-clear')){S.cpProps=[];renderSrc();return}
+  var cpd=e.target.closest('[data-cpdel]');
+  if(cpd){S.cpProps.splice(+cpd.dataset.cpdel,1);renderSrc();return}
+  var cdl=e.target.closest('[data-catdel]');
+  if(cdl){
+    var cid=cdl.dataset.catdel;
+    S.shopCustom=S.shopCustom.filter(function(c){return c.id!==cid});
+    shopSave();
+    if(S.shopCat===cid)S.shopCat=(META.shop[0]||{}).id||'';
+    renderShopCats();renderShopGoods();toast('已删除自定义商品种类');return;
+  }
+  var sct=e.target.closest('[data-shopcat]');
+  if(sct){S.shopCat=sct.dataset.shopcat;S.shopSel={};renderShopCats();renderShopGoods();return}
+  if(e.target.closest('#shop-all')){
+    currentGoods().forEach(function(x){S.shopSel[x.key]=1});renderShopGoods();
+    toast('已勾选当前种类的 '+currentGoods().length+' 件商品');return;
+  }
+  if(e.target.closest('#shop-shelf')){shopShelf();return}
+  if(e.target.closest('#shop-new')){
+    S.scForm={name:'',desc:'',goods:[{c:'r01',q:2,l:85,n:1,s:0}]};
+    renderShopForm();
+    var sf=document.getElementById('shop-form');if(sf)sf.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  if(e.target.closest('#shop-export')){
+    dl('暗黑2商店配置.json',JSON.stringify({cats:S.shopCustom},null,2),'application/json');
+    toast('已导出 '+S.shopCustom.length+' 个自定义商品种类');return;
+  }
+  if(e.target.closest('#shop-import')){$('#shop-file').click();return}
+  if(e.target.closest('#sc-add')){S.scForm.goods.push({c:'r01',q:2,l:85,n:1,s:0});renderShopForm();return}
+  var gd=e.target.closest('[data-gdel]');
+  if(gd){if(S.scForm.goods.length>1)S.scForm.goods.splice(+gd.dataset.gdel,1);renderShopForm();return}
+  if(e.target.closest('#sc-save')){saveShopCat();return}
+  if(e.target.closest('#sc-cancel')){$('#shop-form').style.display='none';return}
   /* add-property panel */
   var ga=e.target.closest('[data-goadd]');
   if(ga){
@@ -828,6 +1566,9 @@ document.addEventListener('click',function(e){
 });
 $('#save').addEventListener('click',save);
 $('#reload').addEventListener('click',function(){$('#file').click()});
+
+/* initial render of the hidden import / shop panels */
+renderSrc();renderQueue();renderShopCats();renderShopGoods();updateCount();
 })();
 </script>
 </body>

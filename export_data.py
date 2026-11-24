@@ -67,6 +67,13 @@ if os.path.exists(_add_path):
     with open(_add_path, encoding='utf-8') as f:
         data['add'] = json.load(f)
 
+# Item dimensions / default durability / base levels / vendor assortments /
+# built-in shop catalog, derived from the CHS 1.13c game data tables.
+_meta_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'item_meta.json')
+if os.path.exists(_meta_path):
+    with open(_meta_path, encoding='utf-8') as f:
+        data['meta'] = json.load(f)
+
 out = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'd2s_data.json')
 open(path, 'w', encoding='utf-8').write(out)

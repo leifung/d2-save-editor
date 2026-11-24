@@ -106,6 +106,8 @@
     var STACK = {}; DATA.stackables.forEach(function (k) { STACK[k] = 1; });
     var CLASSES = DATA.classes;
     var CN = DATA.cn || {};
+    var META = DATA.meta || {};
+    var SIZE = META.size || {}, DEF_DUR = META.dur || {}, DEF_LVL = META.lvl || {};
 
     // Simplified-Chinese names extracted from the CHS game's string tables.
     function cn(map, en) {
@@ -130,7 +132,10 @@
       this.buf = buf; this.nbits = buf.length * 8; this.off = 0; this.fields = [];
     }
     Reader.prototype.bit = function (i) {
-      if (i >= this.nbits) return 0;
+      // Returning 0 past EOF makes a magic-property list loop forever (stat 0
+      // repeats). Any read beyond the buffer is a malformed item: fail fast so
+      // parseItemBlob() can reject the candidate instead of hanging.
+      if (i >= this.nbits) throw new Error('物品数据越界 @bit ' + i);
       return (this.buf[i >> 3] >> (i & 7)) & 1;
     };
     Reader.prototype.rb = function (n) {
@@ -444,7 +449,10 @@
       if (r.rstr(2) !== 'if') throw new Error("技能段头 'if' 未找到 @bit " + (r.off - 16));
       r.rbytes(30);
 
+      var charHeaderByte = r.off / 8;          // "JM" + uint16 count
       res.items = readItems(r, res.version, 'char');
+      res.char_header_byte = charHeaderByte;    // anchor for importing new items
+      res.char_end_byte = r.off / 8;
       res.item_count = res.items.length;
 
       if (r.rstr(2) !== 'JM') throw new Error("尸体段头 'JM' 未找到 @bit " + (r.off - 16));
@@ -761,20 +769,359 @@
       return concatBytes(parts);
     }
 
+    // =====================================================================
+    // ITEM IMPORT / GENERATION  --  arbitrary items into the character list
+    //
+    // A D2S item is a byte-aligned block starting with "JM". Its first 76 bits
+    // are a fixed layout, so the container / grid position can be rewritten
+    // in place. Importing means: (1) relocate the block, (2) splice it right
+    // after the main "JM"+count header, (3) bump the count, (4) fix header.
+    // Everything else in the file is copied verbatim.
+    // =====================================================================
+    var PAGES = {
+      stash:     { id: 0, eq: 0, alt: 5, w: 10, h: 10, cn: '仓库' },
+      inventory: { id: 0, eq: 0, alt: 1, w: 10, h: 4,  cn: '背包' },
+      cube:      { id: 0, eq: 0, alt: 4, w: 3,  h: 4,  cn: '赫拉迪克方块' },
+      belt:      { id: 2, eq: 0, alt: 0, w: 16, h: 1,  cn: '腰带' }
+    };
+    var PAGE_ORDER = ['stash', 'inventory', 'cube'];
+
+    function itemSize(code) {
+      var s = SIZE[String(code || '').trim()];
+      return (s && s.length === 2) ? [s[0], s[1]] : [1, 1];
+    }
+    function itemDur(code) { return DEF_DUR[String(code || '').trim()] || 0; }
+    function itemLvl(code) { return DEF_LVL[String(code || '').trim()] || 1; }
+
+    /** All base item codes for the "create from scratch" picker. */
+    function baseItems() {
+      var out = [], seen = {};
+      [['armor', ARMOR], ['weapon', WEAPON], ['other', OTHER]].forEach(function (pair) {
+        Object.keys(pair[1]).forEach(function (code) {
+          if (seen[code]) return;
+          seen[code] = 1;
+          var d = pair[1][code];
+          out.push({
+            code: code, en: d.n || code, cn: (CN.item && CN.item[code]) || '',
+            cats: d.c || [], size: itemSize(code), kind: pair[0],
+            dur: itemDur(code), lvl: itemLvl(code)
+          });
+        });
+      });
+      return out;
+    }
+
+    /** Compact description of a parsed item + its raw block. */
+    function describeItem(it, bytes) {
+      return {
+        name: it.display_name, en: it.display_name_en || '', type: it.type || '',
+        quality: it.quality || 0, quality_cn: it.quality_cn || '',
+        level: it.level != null ? it.level : 0,
+        loc: it.location_text || '', props: it.props.length,
+        size: itemSize(it.type), bytes: bytes
+      };
+    }
+
+    function readItemAt(buf, start, version) {
+      try {
+        var r = new Reader(buf);
+        r.seekByte(start);
+        var it = readItem(r, version || 0x60, 'import');
+        if (!(it.end_byte > start) || it.end_byte > buf.length) return null;
+        // Reject garbage that happened to parse: a real item's 4-char code must
+        // exist in the game tables (ears are not importable).
+        if (!itemTxt(it.type)) return null;
+        return { item: it, end: it.end_byte };
+      } catch (e) { return null; }
+    }
+
     /**
-     * Unified save: ordinary in-place edits first, then structural additions.
-     * opts = { edits:[{anchor,value}], additions:[{item,id,values}], levelSync }
+     * Parse a standalone item blob. Accepts:
+     *   - a complete .d2s save (all top-level items of every section)
+     *   - a .d2i file ("JM" + item, or "JM" + uint16 version + item)
+     *   - an item list ("JM" + uint16 count + N items)
+     *   - raw item bytes / hex already converted by the UI
+     */
+    function parseItemBlob(input) {
+      var buf = (input instanceof Uint8Array) ? input : new Uint8Array(input);
+      if (buf.length < 16) throw new Error('物品数据太短（至少 16 字节）');
+
+      // Full character save: magic 0xAA55AA55 little endian = 55 AA 55 AA
+      if (buf[0] === 0x55 && buf[1] === 0xaa && buf[2] === 0x55 && buf[3] === 0xaa) {
+        var res = parse(buf);
+        if (!res.ok) throw new Error('源存档未能精确对齐 EOF，无法作为物品来源');
+        return {
+          kind: 'd2s', name: res.name,
+          items: res.toplevel.map(function (it) {
+            return describeItem(it, buf.slice(it.start_byte, it.end_byte));
+          })
+        };
+      }
+
+      // Locate every plausible item header near the beginning of the blob.
+      var starts = [];
+      for (var p = 0; p + 1 < buf.length && p < 64; p++) {
+        if (buf[p] === 0x4a && buf[p + 1] === 0x4d) starts.push(p);   // "JM"
+      }
+      if (!starts.length) throw new Error('未找到物品头 JM，数据可能不是有效的物品块');
+
+      // 1) item list ("JM" + uint16 count + N items) — checked first because a
+      //    list can otherwise be misread as one long "item" beginning at byte 0.
+      for (var s2 = 0; s2 < starts.length; s2++) {
+        var st = starts[s2];
+        var cnt = buf[st + 2] | (buf[st + 3] << 8);
+        if (!cnt || cnt > 512 || st + 4 > buf.length) continue;
+        var cursor = st + 4, list = [], good = true;
+        for (var i = 0; i < cnt; i++) {
+          var x = readItemAt(buf, cursor, 0x60);
+          if (!x) { good = false; break; }
+          list.push(describeItem(x.item, buf.slice(cursor, x.end)));
+          cursor = x.end;
+        }
+        if (good && cursor === buf.length) return { kind: 'list', items: list };
+      }
+      // 2) single item (most .d2i files)
+      for (var s = 0; s < starts.length; s++) {
+        var one = readItemAt(buf, starts[s], 0x60);
+        if (one && one.end === buf.length) {
+          return { kind: 'item', items: [describeItem(one.item, buf.slice(starts[s], one.end))] };
+        }
+      }
+      // 3) single item followed by zero padding (some editors pad to 4/16 B)
+      for (var s3 = 0; s3 < starts.length; s3++) {
+        var o = readItemAt(buf, starts[s3], 0x60);
+        if (!o) continue;
+        var pad = true;
+        for (var q = o.end; q < buf.length; q++) if (buf[q] !== 0) { pad = false; break; }
+        if (pad) return { kind: 'item', items: [describeItem(o.item, buf.slice(starts[s3], o.end))] };
+      }
+      throw new Error('无法识别物品数据；请确认是 .d2s / .d2i / 十六进制物品码');
+    }
+
+    /** LSB-first bit accumulator for generating a brand-new item. */
+    var _itemSeq = 0;
+    function nextItemId() {
+      // Unique per generated item (a batch created in the same millisecond must
+      // not share an id, which some game routines use to track items).
+      return ((Date.now() >>> 0) + (++_itemSeq) * 0x9e3779b9) >>> 0;
+    }
+    function newBits() { return { a: [] }; }
+    function put(w, value, n) { pushBits(w.a, value, n); }
+    function finish(w) {
+      while (w.a.length % 8) w.a.push(0);
+      return bitsToBytes(w.a);
+    }
+
+    /**
+     * Build a legal 1.13c item block from scratch.
+     * spec = { type, quality, level, identified, ethereal, quantity, sockets,
+     *          defense, maxdur, curdur, uniqueId, setId, prefix, suffix,
+     *          props:[{id,values}], loc:{id,eq,x,y,alt} }
+     */
+    function buildItem(spec) {
+      spec = spec || {};
+      var code = String(spec.type || '').trim().slice(0, 4);
+      var d = itemTxt(code);
+      if (!d) throw new Error('未知物品代码 ' + code);
+      var cats = d.c || [];
+      var typeId = cats.indexOf('Any Armor') >= 0 ? ITEM_TYPE.Armor
+        : (cats.indexOf('Weapon') >= 0 ? ITEM_TYPE.Weapon : ITEM_TYPE.Other);
+      var isQuest = cats.indexOf('Quest') >= 0;
+
+      var q = Number(spec.quality || 2);
+      if (q < 1 || q > 8) q = 2;
+      var level = Math.max(0, Math.min(127, Number(spec.level != null ? spec.level : itemLvl(code))));
+      var ident = spec.identified === 0 ? 0 : 1;
+      var ether = spec.ethereal ? 1 : 0;
+      var sockets = Math.max(0, Math.min(15, Number(spec.sockets || 0)));
+      var loc = spec.loc || { id: 0, eq: 0, x: 0, y: 0, alt: 5 };
+      var w = newBits();
+
+      put(w, 0x4d4a, 16);                       // "JM" (J=0x4A low, M=0x4D high)
+      put(w, 0, 4); put(w, ident, 1); put(w, 0, 6);
+      put(w, sockets > 0 ? 1 : 0, 1);           // socketed
+      put(w, 0, 1); put(w, 1, 1); put(w, 0, 2);  // new = picked up since last save
+      put(w, 0, 1); put(w, 0, 1); put(w, 0, 3);  // ear / starter / unused
+      put(w, 0, 1);                             // simple_item = 0 (full item)
+      put(w, ether, 1); put(w, 1, 1);            // ethereal / IFLAG_JUSTSAVED
+      put(w, 0, 1);                             // personalized
+      put(w, 0, 1);                             // low quality
+      put(w, 0, 1);                             // given_runeword
+      put(w, 0, 5);
+      put(w, 101, 10);                          // item version (1.10 expansion)
+      put(w, loc.id || 0, 3);
+      put(w, loc.eq || 0, 4);
+      put(w, loc.x || 0, 4);
+      put(w, loc.y || 0, 4);
+      put(w, loc.alt || 0, 3);
+      var code4 = (code + '    ').slice(0, 4);
+      for (var ci = 0; ci < 4; ci++) put(w, code4.charCodeAt(ci), 8);
+
+      if (isQuest) { put(w, 0, MP[356].sB); put(w, 0, 1); }
+      else put(w, 0, 3);                        // nr_of_items_in_sockets
+
+      // ---- extended item body ----
+      put(w, (spec.uid != null ? Number(spec.uid) : nextItemId()) >>> 0, 32);
+      put(w, level, 7);
+      put(w, q, 4);
+      put(w, 0, 1);                             // multiple_pictures
+      put(w, 0, 1);                             // class_specific
+      if (q === QUALITY.Low || q === QUALITY.Superior) put(w, 0, 3);
+      else if (q === QUALITY.Magic) {
+        put(w, Math.max(0, Number(spec.prefix || 0)), 11);
+        put(w, Math.max(0, Number(spec.suffix || 0)), 11);
+      } else if (q === QUALITY.Set) put(w, Math.max(0, Number(spec.setId || 0)), 12);
+      else if (q === QUALITY.Unique) put(w, Math.max(0, Number(spec.uniqueId || 0)), 12);
+      else if (q === QUALITY.Rare || q === QUALITY.Crafted) {
+        put(w, 0, 8); put(w, 0, 8);
+        for (var k = 0; k < 6; k++) put(w, 0, 1);
+      }
+      if (code === 'tbk' || code === 'ibk') put(w, code === 'ibk' ? 1 : 0, 5);
+      put(w, 0, 1);                             // timestamp
+
+      if (typeId === ITEM_TYPE.Armor) {
+        var df = Math.max(0, Number(spec.defense || 0));
+        put(w, df + (MP[31].sA || 0), MP[31].sB);
+      }
+      if (typeId === ITEM_TYPE.Armor || typeId === ITEM_TYPE.Weapon) {
+        var md = Number(spec.maxdur != null ? spec.maxdur : itemDur(code));
+        md = Math.max(0, Math.min(Math.pow(2, MP[73].sB) - 1, md));
+        put(w, md, MP[73].sB);
+        if (md > 0) {
+          var cd = Number(spec.curdur != null ? spec.curdur : md);
+          put(w, Math.max(0, Math.min(Math.pow(2, MP[72].sB) - 1, cd)), MP[72].sB);
+        }
+      }
+      if (STACK[code]) put(w, Math.max(1, Math.min(511, Number(spec.quantity || 1))), 9);
+      if (sockets > 0) put(w, sockets, 4);
+      if (q === QUALITY.Set) put(w, 0, 5);       // set property list flags
+
+      var props = (spec.props || []).slice().sort(function (a, b) { return a.id - b.id; });
+      for (var pi = 0; pi < props.length; pi++) {
+        var pb = buildPropBits(props[pi].id, normalizeAddValues(props[pi].id, props[pi].values));
+        for (var bj = 0; bj < pb.length; bj++) w.a.push(pb[bj]);
+      }
+      put(w, 0x1ff, 9);                         // magic property list terminator
+      var bytes = finish(w);
+
+      // Sanity: the block must round-trip through our own parser.
+      var chk = readItemAt(bytes, 0, 0x60);
+      if (!chk || chk.end !== bytes.length) throw new Error('生成的物品块自检失败（' + code + '）');
+      return bytes;
+    }
+
+    /** Rewrite the container / grid bytes of a standalone item block (bits 58..75). */
+    function relocateItem(bytes, loc) {
+      var out = new Uint8Array(bytes);
+      setBits(out, 58, 3, loc.id || 0);
+      setBits(out, 61, 4, loc.eq || 0);
+      setBits(out, 65, 4, loc.x || 0);
+      setBits(out, 69, 4, loc.y || 0);
+      setBits(out, 73, 3, loc.alt || 0);
+      return out;
+    }
+
+    function markCells(page, occ, x, y, w, h) {
+      for (var dy = 0; dy < h; dy++) {
+        for (var dx = 0; dx < w; dx++) {
+          var cx = x + dx, cy = y + dy;
+          if (cx >= 0 && cx < page.w && cy >= 0 && cy < page.h) occ[cy * page.w + cx] = 1;
+        }
+      }
+    }
+
+    /** Assign a free grid slot to each imported item; returns relocated byte blocks. */
+    function placeItems(res, imports) {
+      var occ = {}, t;
+      for (t = 0; t < PAGE_ORDER.length; t++) {
+        var pg = PAGES[PAGE_ORDER[t]];
+        occ[PAGE_ORDER[t]] = new Array(pg.w * pg.h);
+      }
+      occ.belt = new Array(PAGES.belt.w * PAGES.belt.h);
+
+      // Mark cells already occupied in the CURRENT save.
+      for (var i = 0; i < res.items.length; i++) {
+        var it = res.items[i], key = null;
+        if (it.location_id === 2 && it.alt_position_id === 0) key = 'belt';
+        else if (it.location_id === 0 && it.alt_position_id === 5) key = 'stash';
+        else if (it.location_id === 0 && it.alt_position_id === 1) key = 'inventory';
+        else if (it.location_id === 0 && it.alt_position_id === 4) key = 'cube';
+        if (!key) continue;
+        var sz = itemSize(it.type);
+        markCells(PAGES[key], occ[key], it.position_x || 0, it.position_y || 0, sz[0], sz[1]);
+      }
+
+      var out = [];
+      for (var n = 0; n < imports.length; n++) {
+        var imp = imports[n];
+        if (imp.target === 'keep') { out.push(new Uint8Array(imp.bytes)); continue; }
+        var sz2 = imp.size || itemSize(imp.type);
+        var targets = imp.target && imp.target !== 'auto' ? [imp.target] : PAGE_ORDER;
+        var done = false;
+        for (var ti = 0; ti < targets.length && !done; ti++) {
+          var tk = targets[ti], page = PAGES[tk];
+          if (!page || !occ[tk]) continue;
+          if (sz2[1] > page.h || sz2[0] > page.w) continue;
+          for (var y = 0; y <= page.h - sz2[1] && !done; y++) {
+            for (var x = 0; x <= page.w - sz2[0] && !done; x++) {
+              var free = true;
+              for (var dy = 0; dy < sz2[1] && free; dy++) {
+                for (var dx = 0; dx < sz2[0]; dx++) {
+                  if (occ[tk][(y + dy) * page.w + x + dx]) { free = false; break; }
+                }
+              }
+              if (!free) continue;
+              markCells(page, occ[tk], x, y, sz2[0], sz2[1]);
+              out.push(relocateItem(imp.bytes, {
+                id: page.id, eq: 0, x: x, y: y, alt: page.alt
+              }));
+              done = true;
+            }
+          }
+        }
+        if (!done) throw new Error('目标容器空间不足，无法放置「' + (imp.name || imp.type || '物品') + '」，请换一个容器或减少数量');
+      }
+      return out;
+    }
+
+    /** Splice imported items into the main character item list. */
+    function insertItems(original, imports) {
+      var buf = (original instanceof Uint8Array) ? original : new Uint8Array(original);
+      var res = parse(buf);
+      if (!res.ok) throw new Error('存档未能精确对齐 EOF，为安全起见拒绝导入物品');
+      var placed = placeItems(res, imports);
+      if (!placed.length) return buf;
+      var hb = res.char_header_byte;
+      var cnt = res.item_count + placed.length;
+      if (cnt > 0xffff) throw new Error('物品数量超出存档上限');
+      var out = concatBytes([buf.slice(0, hb + 4), concatBytes(placed), buf.slice(hb + 4)]);
+      out[hb + 2] = cnt & 0xff;
+      out[hb + 3] = (cnt >> 8) & 0xff;
+      fixHeader(out);
+      var chk = parse(out);
+      if (!chk.ok) throw new Error('导入后结构校验未通过');
+      if (chk.item_count !== cnt) throw new Error('导入后物品计数不一致');
+      return out;
+    }
+
+    /**
+     * Unified save: in-place edits -> structural additions -> item imports.
+     * opts = { edits, additions, imports, levelSync }
      */
     function save(original, opts) {
       opts = opts || {};
       var buf = applyEdits(original, opts.edits || [], opts.levelSync);
       var adds = opts.additions || [];
-      if (!adds.length) return buf;
-      var res = parse(buf);
-      if (!res.ok) throw new Error('存档未能精确对齐 EOF，为安全起见拒绝添加属性');
-      var out = rebuildAll(buf, res, adds);
-      fixHeader(out);
-      return out;
+      if (adds.length) {
+        var res = parse(buf);
+        if (!res.ok) throw new Error('存档未能精确对齐 EOF，为安全起见拒绝添加属性');
+        buf = rebuildAll(buf, res, adds);
+        fixHeader(buf);
+      }
+      var imports = opts.imports || [];
+      if (imports.length) buf = insertItems(buf, imports);
+      fixHeader(buf);
+      return buf;
     }
 
     function fieldRange(anchor) {
@@ -807,7 +1154,11 @@
       decodeVal: decodeVal, flatten: flatten, propCN: propCN,
       addableProps: addableProps, describeAddProp: describeAddProp,
       normalizeAddValues: normalizeAddValues, buildPropBits: buildPropBits,
-      ITEM_TYPE: ITEM_TYPE, QUALITY: QUALITY, QUALITY_CN: QUALITY_CN, ATTR_LABEL: ATTR_LABEL
+      ITEM_TYPE: ITEM_TYPE, QUALITY: QUALITY, QUALITY_CN: QUALITY_CN, ATTR_LABEL: ATTR_LABEL,
+      // item import / generation
+      parseItemBlob: parseItemBlob, buildItem: buildItem, insertItems: insertItems,
+      relocateItem: relocateItem, placeItems: placeItems, itemSize: itemSize,
+      baseItems: baseItems, describeItem: describeItem, PAGES: PAGES
     };
   }
 

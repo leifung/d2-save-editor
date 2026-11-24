@@ -27,6 +27,13 @@ ref/
 *.log
 .DS_Store
 Thumbs.db
+_ui_check.js
+_gen_*.bin
+_probe_*.txt
+
+# local stable-version backups (never published)
+*_备份.html
+*_backup.js
 
 # never commit credentials or local publish helpers
 .gh_token
